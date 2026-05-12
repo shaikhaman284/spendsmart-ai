@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://spendsmart.credex.rocks/sitemap.xml
