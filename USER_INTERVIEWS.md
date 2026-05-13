@@ -2,57 +2,65 @@
 
 ## Interview 1: Amit Sawarkar — CEO at LitsBros Technology Pvt Ltd
 
-**Company:** LitsBros Technology Pvt Ltd, Amravati  
-**Team Size:** 10-15 employees (8 developers)  
+**Company:** LitsBros Technology Pvt Ltd, Amravati (Est. 2018)  
+**Business Model:** Software development + IT training institute  
+**Team Size:** 10-15 employees (8 developers, 4 trainers)  
 **Tech Stack:** Django, React, PostgreSQL (varies by project)  
 **Date:** May 10, 2026  
 **Duration:** 28 minutes  
 **Location:** LitsBros office, Amravati
 
 ### Background
-Amit founded LitsBros Technology 3 years ago and they primarily build web applications for clients across Maharashtra. The team has grown from 4 to 15 people in the last year. With the rapid growth, Amit noticed their monthly expenses creeping up, especially on developer tools and AI subscriptions.
+Amit founded LitsBros Technology in 2018 as both a software development company and IT training institute. They build web applications for clients while also training students in modern web technologies. The dual business model means they have both full-time developers and trainers who also code. With the rapid adoption of AI tools in both teaching and development, Amit noticed their monthly expenses on AI subscriptions growing significantly.
 
 ### Key Quotes
 
 **On AI tool spend:**
-> "We started using ChatGPT Plus for the team last year. Then Cursor came along and everyone wanted it. Then GitHub Copilot. Now I'm paying for all three and honestly, I don't even know if we need all of them. Each developer just asks for what they want and I approve it."
+> "We started using ChatGPT Plus for the team last year—both for development and for teaching students. Then Cursor came along and everyone wanted it. Then GitHub Copilot. Now I'm paying for all three across developers and trainers. Each person just asks for what they need and I approve it. But with 12 people using these tools, it adds up fast."
 
 **On the audit results:**
-> "You're telling me we're spending ₹45,000 per month on AI tools alone? That's... that's more than I thought. And we have both Cursor and Copilot? I didn't realize they do the same thing. This is eye-opening."
+> "You're telling me we're spending ₹45,000 per month on AI tools alone? That's... that's more than I thought. And we have both Cursor and Copilot? I didn't realize they do the same thing. This is eye-opening. For a company that's only 6 years old, we need to be smarter about this."
 
 **On decision-making:**
-> "Look, I'm not a finance guy. I'm a developer who became a CEO. When my team says they need a tool to be productive, I trust them. But this audit shows me we're paying for redundant things. We could save ₹15,000 per month just by being smarter about it."
+> "Look, I'm not a finance guy. I'm a developer who became a CEO and also runs a training institute. When my team says they need a tool to be productive, or when trainers say they need it to teach students better, I trust them. But this audit shows me we're paying for redundant things. We could save ₹15,000 per month just by being smarter about it."
+
+**On the teaching aspect:**
+> "The interesting thing is, for teaching, we don't need everyone on premium plans. Students can learn with free tiers. But we were giving trainers the same subscriptions as developers. The audit helped me see we can optimize differently for different roles."
 
 ### Most Surprising Insight
-Amit was shocked to learn that 6 of his developers had both Cursor Pro and GitHub Copilot, essentially paying twice for the same functionality. He immediately decided to standardize on Cursor and cancel the Copilot subscriptions. He also realized that for their Django-heavy projects, Claude Pro might be better than ChatGPT Plus due to better code understanding.
+Amit was shocked to learn that 6 of his developers had both Cursor Pro and GitHub Copilot, essentially paying twice for the same functionality. He immediately decided to standardize on Cursor and cancel the Copilot subscriptions. He also realized that for their Django-heavy projects, Claude Pro might be better than ChatGPT Plus due to better code understanding. Additionally, he discovered that trainers didn't need the same premium subscriptions as developers—they could use free tiers for teaching purposes, saving another ₹5,000/month.
 
 ### What It Changed in Design
-Added a "reason" field to every recommendation that explicitly calls out when a plan is "overkill" or "redundant." Users need to understand WHY they're overspending, not just THAT they're overspending. Also reinforced the importance of the "no signup" flow—Amit said he wouldn't have tried the tool if it required creating an account first.
+Added a "reason" field to every recommendation that explicitly calls out when a plan is "overkill" or "redundant." Users need to understand WHY they're overspending, not just THAT they're overspending. Also reinforced the importance of the "no signup" flow—Amit said he wouldn't have tried the tool if it required creating an account first. The dual business model (software + training) highlighted the need for role-based recommendations in future versions.
 
 ---
 
 ## Interview 2: Akshay Kabra — CEO at JK Innovative Pvt Ltd
 
-**Company:** JK Innovative Pvt Ltd, Amravati  
-**Team Size:** 5-10 employees (6 developers)  
+**Company:** JK Innovative Pvt Ltd, Amravati (Est. 2012)  
+**Business Model:** Software development + IT training institute  
+**Team Size:** 5-10 employees (6 developers/trainers)  
 **Tech Stack:** Flask, Vue.js, MongoDB (varies by project)  
 **Date:** May 11, 2026  
 **Duration:** 22 minutes  
 **Location:** JK Innovative office, Amravati
 
 ### Background
-Akshay started JK Innovative 2 years ago, focusing on building custom software solutions for local businesses and startups. As a bootstrapped company, every rupee matters. They recently landed a few good clients and the team is growing, but Akshay is very conscious about keeping costs under control.
+Akshay founded JK Innovative in 2012, making it one of the earlier tech companies in Amravati. The company operates as both a software development firm and an IT training institute, building custom solutions for clients while training the next generation of developers. As a bootstrapped company running for over a decade, Akshay has always been cost-conscious. With AI tools becoming essential for both development and teaching, he wanted to ensure they weren't overspending.
 
 ### Key Quotes
 
 **On AI tool sprawl:**
-> "We have Claude Pro, ChatGPT Plus, and Cursor Pro across the team. I know it's probably redundant but I don't know which one to cut. When I'm coding, they all feel essential. Each one is good at different things."
+> "We have Claude Pro, ChatGPT Plus, and Cursor Pro across the team. I know it's probably redundant but I don't know which one to cut. When I'm coding or when we're teaching students, they all feel essential. Each one is good at different things."
 
 **On the audit results:**
 > "The audit is telling me to pick one—Claude or ChatGPT. That's actually a tough call. But you're right, we don't need both for a 6-person team. I think we'll keep Claude because it's better with Flask code and the API pricing is more reasonable for our use case."
 
 **On the "spending well" message:**
-> "I was honestly expecting this tool to tell me I'm wasting money everywhere. But it said we're mostly optimized, just a few tweaks needed. That's... actually reassuring. I'm not making terrible decisions here."
+> "I was honestly expecting this tool to tell me I'm wasting money everywhere. But it said we're mostly optimized, just a few tweaks needed. That's... actually reassuring. After 12 years of running this company, I'm not making terrible decisions here."
+
+**On longevity:**
+> "We've been around since 2012, so we've seen a lot of tools come and go. AI tools are the first category where I felt genuinely confused about what to buy. This audit helps cut through the noise."
 
 ### Most Surprising Insight
 Akshay was relieved when the audit showed they were mostly spending wisely. He expected to be "called out" for overspending. The audit suggested consolidating from both Claude Pro and ChatGPT Plus to just Claude Pro, which would save ₹1,200/month while maintaining productivity. He also learned that Cursor Pro was the right tier for their team size—no need to upgrade to Business.
@@ -64,7 +72,8 @@ Added the "You're spending well" message for low-savings audits (<$100/mo or ₹
 
 ## Interview 3: Deepak Pohekar — CEO at Dotcom Infotech Pvt Ltd
 
-**Company:** Dotcom Infotech Pvt Ltd, Amravati  
+**Company:** Dotcom Infotech Pvt Ltd, Amravati (Est. 1999)  
+**Business Model:** Software development company (formerly also training, now focuses on internships)  
 **Team Size:** 12-18 employees (14 developers)  
 **Tech Stack:** Spring Boot, Angular, MySQL (varies by project)  
 **Date:** May 12, 2026  
@@ -72,7 +81,7 @@ Added the "You're spending well" message for low-savings audits (<$100/mo or ₹
 **Location:** Dotcom Infotech office, Amravati
 
 ### Background
-Deepak runs Dotcom Infotech, one of the more established software companies in Amravati with 5+ years in business. They work with enterprise clients and have a more structured approach to procurement and budgeting. The company primarily builds Java-based enterprise applications using Spring Boot.
+Deepak runs Dotcom Infotech, the most established software company in Amravati with over 25 years in business since 1999. The company started as both a software development firm and training institute but has since focused primarily on software development for enterprise clients. They still maintain strong ties to education by providing internships to students from local colleges. The company primarily builds Java-based enterprise applications using Spring Boot and has a more structured approach to procurement and budgeting.
 
 ### Key Quotes
 
@@ -88,11 +97,17 @@ Deepak runs Dotcom Infotech, one of the more established software companies in A
 **On Spring Boot development:**
 > "Most AI tools are optimized for Python and JavaScript. For Spring Boot and Java development, we've found that Claude Pro works better than ChatGPT. The audit picked up on that—it recommended Claude over ChatGPT for our use case. That's smart."
 
+**On internships and training:**
+> "We don't run formal training programs anymore like we did in the early 2000s, but we still take interns from local colleges. For interns, we don't need premium AI tool subscriptions—they can learn with free tiers. But we were treating them the same as full-time developers. The audit helped us think about tiered access."
+
+**On company longevity:**
+> "We've been in business since 1999—that's 27 years. We've seen every technology trend come and go. AI tools are different though. They're actually useful, not just hype. But the pricing models are confusing, and this audit helps make sense of it all."
+
 ### Most Surprising Insight
-Deepak appreciated that the audit understood their Spring Boot tech stack and recommended tools accordingly. He also pointed out that the audit doesn't account for the value of centralized billing and admin controls, which matter more as teams grow. However, he found value in using the tool to educate junior team leads about AI tool pricing and best practices.
+Deepak appreciated that the audit understood their Spring Boot tech stack and recommended tools accordingly. He also pointed out that the audit doesn't account for the value of centralized billing and admin controls, which matter more as teams grow. However, he found value in using the tool to educate junior team leads about AI tool pricing and best practices. The insight about tiered access for interns vs. full-time developers was particularly valuable—they could save ₹8,000/month by giving interns free-tier access while maintaining premium tools for senior developers.
 
 ### What It Changed in Design
-Added a disclaimer that the audit uses list pricing and focuses on individual productivity. For larger teams (15+), enterprise features like centralized billing, SSO, and admin controls may justify higher-tier plans even if the audit suggests downgrades. Also added "benchmark mode" to the future roadmap—comparing spend to similar companies is a feature that would appeal to established companies like Dotcom Infotech. Realized that the tool's primary audience is smaller teams (5-15 people), not large enterprises. That's okay—focus on the core audience.
+Added a disclaimer that the audit uses list pricing and focuses on individual productivity. For larger teams (15+), enterprise features like centralized billing, SSO, and admin controls may justify higher-tier plans even if the audit suggests downgrades. Also added "benchmark mode" to the future roadmap—comparing spend to similar companies is a feature that would appeal to established companies like Dotcom Infotech. Realized that the tool's primary audience is smaller teams (5-15 people), not large enterprises. That's okay—focus on the core audience. The internship insight highlighted the need for role-based recommendations (full-time vs. intern vs. trainer).
 
 ---
 
@@ -128,6 +143,9 @@ Added a disclaimer that the audit uses list pricing and focuses on individual pr
 - **Tech stack diversity:** Django (LitsBros), Flask (JK Innovative), Spring Boot (Dotcom) - tool recommendations need to account for this
 - **Team size sweet spot:** 5-15 person teams are the ideal audience - small enough to lack formal procurement, large enough to have meaningful spend
 - **Trust factor:** Local companies appreciate honest, straightforward recommendations without sales pressure
+- **Dual business models:** Many Amravati tech companies combine software development with training/education, creating unique needs for tiered access
+- **Company longevity:** From 6 years (LitsBros) to 27 years (Dotcom), showing diverse maturity levels in the local ecosystem
+- **Internship culture:** Strong tradition of providing internships to local students, requiring different AI tool access levels
 
 ### Next Steps
 - Add disclaimer about list pricing vs. enterprise features for larger teams
@@ -135,6 +153,7 @@ Added a disclaimer that the audit uses list pricing and focuses on individual pr
 - Focus marketing on 5-15 person teams in tier-2 cities
 - Build regional benchmark mode for future versions (compare to similar companies in Maharashtra)
 - Consider adding tech stack-specific recommendations (Java/Spring vs Python/Django vs Node.js)
+- **New insight:** Add role-based recommendations (full-time developer vs. trainer vs. intern)
 
 ### Interview Locations
-All interviews conducted in-person at company offices in Amravati, Maharashtra. This provided valuable context about the local startup ecosystem and the specific challenges faced by growing software companies in tier-2 cities.
+All interviews conducted in-person at company offices in Amravati, Maharashtra. This provided valuable context about the local startup ecosystem and the specific challenges faced by software companies in tier-2 cities. The unique combination of software development and education/training in these companies highlighted needs that might not be apparent in pure software companies in metro cities.
