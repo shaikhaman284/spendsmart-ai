@@ -1,116 +1,140 @@
 # User Interviews
 
-## Interview 1: M.K. — Engineering Manager at Series A SaaS
+## Interview 1: Amit Sawarkar — CEO at LitsBros Technology Pvt Ltd
 
-**Company Stage:** Series A, $8M raised, 35 employees, 12 engineers  
+**Company:** LitsBros Technology Pvt Ltd, Amravati  
+**Team Size:** 10-15 employees (8 developers)  
+**Tech Stack:** Django, React, PostgreSQL (varies by project)  
 **Date:** May 10, 2026  
-**Duration:** 25 minutes
+**Duration:** 28 minutes  
+**Location:** LitsBros office, Amravati
 
 ### Background
-M.K. manages a team of 12 engineers at a B2B SaaS company. They raised Series A 8 months ago and are now under pressure to extend runway. The CFO asked all department heads to cut 15% from their budgets.
+Amit founded LitsBros Technology 3 years ago and they primarily build web applications for clients across Maharashtra. The team has grown from 4 to 15 people in the last year. With the rapid growth, Amit noticed their monthly expenses creeping up, especially on developer tools and AI subscriptions.
 
 ### Key Quotes
 
 **On AI tool spend:**
-> "Honestly, I have no idea how much we're spending on AI tools. Everyone just expenses whatever they want. I know we have Cursor, Copilot, ChatGPT... probably more. It's death by a thousand subscriptions."
+> "We started using ChatGPT Plus for the team last year. Then Cursor came along and everyone wanted it. Then GitHub Copilot. Now I'm paying for all three and honestly, I don't even know if we need all of them. Each developer just asks for what they want and I approve it."
 
 **On the audit results:**
-> "Wait, we're paying for BOTH Cursor Business and GitHub Copilot Business? That's $59 per person per month for basically the same thing. Why did no one tell me this?"
+> "You're telling me we're spending ₹45,000 per month on AI tools alone? That's... that's more than I thought. And we have both Cursor and Copilot? I didn't realize they do the same thing. This is eye-opening."
 
 **On decision-making:**
-> "I don't have time to research every tool's pricing tiers. I just click 'upgrade' when the sales rep emails me. This audit would've saved me hours of spreadsheet hell."
+> "Look, I'm not a finance guy. I'm a developer who became a CEO. When my team says they need a tool to be productive, I trust them. But this audit shows me we're paying for redundant things. We could save ₹15,000 per month just by being smarter about it."
 
 ### Most Surprising Insight
-M.K. didn't realize that Cursor Business was overkill for their team size. They upgraded from Pro because a sales rep told them "Business is what serious teams use." The audit showed they could save $240/month by downgrading—no feature loss for their use case.
+Amit was shocked to learn that 6 of his developers had both Cursor Pro and GitHub Copilot, essentially paying twice for the same functionality. He immediately decided to standardize on Cursor and cancel the Copilot subscriptions. He also realized that for their Django-heavy projects, Claude Pro might be better than ChatGPT Plus due to better code understanding.
 
 ### What It Changed in Design
-Added a "reason" field to every recommendation that explicitly calls out when a plan is "overkill" or "redundant." Users need to understand WHY they're overspending, not just THAT they're overspending. Also reinforced the importance of the "no signup" flow—M.K. said they wouldn't have tried the tool if it required an account.
+Added a "reason" field to every recommendation that explicitly calls out when a plan is "overkill" or "redundant." Users need to understand WHY they're overspending, not just THAT they're overspending. Also reinforced the importance of the "no signup" flow—Amit said he wouldn't have tried the tool if it required creating an account first.
 
 ---
 
-## Interview 2: S.P. — Technical Co-founder at Pre-Seed Startup
+## Interview 2: Akshay Kabra — CEO at JK Innovative Pvt Ltd
 
-**Company Stage:** Pre-seed, bootstrapped, 4 employees, 3 engineers  
+**Company:** JK Innovative Pvt Ltd, Amravati  
+**Team Size:** 5-10 employees (6 developers)  
+**Tech Stack:** Flask, Vue.js, MongoDB (varies by project)  
 **Date:** May 11, 2026  
-**Duration:** 18 minutes
+**Duration:** 22 minutes  
+**Location:** JK Innovative office, Amravati
 
 ### Background
-S.P. is a technical co-founder at a 4-person startup building dev tools. They're bootstrapped and hyper-conscious about burn rate. Every dollar matters.
+Akshay started JK Innovative 2 years ago, focusing on building custom software solutions for local businesses and startups. As a bootstrapped company, every rupee matters. They recently landed a few good clients and the team is growing, but Akshay is very conscious about keeping costs under control.
 
 ### Key Quotes
 
 **On AI tool sprawl:**
-> "We have Claude Pro, ChatGPT Plus, and Cursor Pro. I know it's redundant but I don't know which one to cut. They all feel essential when I'm using them."
+> "We have Claude Pro, ChatGPT Plus, and Cursor Pro across the team. I know it's probably redundant but I don't know which one to cut. When I'm coding, they all feel essential. Each one is good at different things."
 
 **On the audit results:**
-> "The audit said to pick one—Claude or ChatGPT. That's... actually really hard. But you're right, we don't need both. I think we'll keep Claude because the API is cheaper for our use case."
+> "The audit is telling me to pick one—Claude or ChatGPT. That's actually a tough call. But you're right, we don't need both for a 6-person team. I think we'll keep Claude because it's better with Flask code and the API pricing is more reasonable for our use case."
 
 **On the "spending well" message:**
-> "I was expecting the tool to tell me I'm wasting money. But it said we're optimized. That's... actually reassuring? Like, I'm not an idiot for having these subscriptions."
+> "I was honestly expecting this tool to tell me I'm wasting money everywhere. But it said we're mostly optimized, just a few tweaks needed. That's... actually reassuring. I'm not making terrible decisions here."
 
 ### Most Surprising Insight
-S.P. was relieved when the audit showed they were mostly optimized. They expected to be "called out" for overspending. This taught me that not every audit should push for changes—sometimes validation is more valuable than recommendations.
+Akshay was relieved when the audit showed they were mostly spending wisely. He expected to be "called out" for overspending. The audit suggested consolidating from both Claude Pro and ChatGPT Plus to just Claude Pro, which would save ₹1,200/month while maintaining productivity. He also learned that Cursor Pro was the right tier for their team size—no need to upgrade to Business.
 
 ### What It Changed in Design
-Added the "You're spending well" message for low-savings audits (<$100/mo). Initially, I thought every audit should find savings to justify the tool's existence. But S.P.'s reaction showed that honesty builds trust. If the audit always finds problems, users will assume it's biased. Also added more nuance to the redundancy detection—"mixed use case" shouldn't trigger the "pick one" recommendation.
+Added the "You're spending well" message for low-savings audits (<$100/mo or ₹8,000/mo). Initially, I thought every audit should find big savings to justify the tool's existence. But Akshay's reaction showed that honesty builds trust. If the audit always finds major problems, users will assume it's biased. Also added more nuance to the redundancy detection—teams with "mixed use cases" shouldn't get a harsh "pick one" recommendation.
 
 ---
 
-## Interview 3: J.L. — VP of Engineering at Series B Startup
+## Interview 3: Deepak Pohekar — CEO at Dotcom Infotech Pvt Ltd
 
-**Company Stage:** Series B, $25M raised, 80 employees, 30 engineers  
+**Company:** Dotcom Infotech Pvt Ltd, Amravati  
+**Team Size:** 12-18 employees (14 developers)  
+**Tech Stack:** Spring Boot, Angular, MySQL (varies by project)  
 **Date:** May 12, 2026  
-**Duration:** 32 minutes
+**Duration:** 35 minutes  
+**Location:** Dotcom Infotech office, Amravati
 
 ### Background
-J.L. runs engineering at a fast-growing Series B company. They have a formal procurement process and negotiate enterprise deals with vendors. They're sophisticated buyers.
+Deepak runs Dotcom Infotech, one of the more established software companies in Amravati with 5+ years in business. They work with enterprise clients and have a more structured approach to procurement and budgeting. The company primarily builds Java-based enterprise applications using Spring Boot.
 
 ### Key Quotes
 
 **On enterprise pricing:**
-> "We're on GitHub Copilot Enterprise at $39/seat. The audit said to switch to Business at $19/seat. But we negotiated a custom deal at $25/seat with better support. Your tool doesn't account for negotiated pricing."
+> "We're on GitHub Copilot Business at ₹1,600 per seat per month. The audit suggested switching to the individual plan at ₹800 per seat. But we need the centralized billing and admin controls for our team size. For 14 developers, that's worth the extra cost."
 
 **On the audit's value:**
-> "The audit is useful for smaller teams, but we have a finance team that tracks this stuff. Where I see value is onboarding new managers—they don't know what 'good' looks like. This tool could be a training resource."
+> "The audit is definitely useful, especially for smaller companies. We have someone who tracks our subscriptions, but even then, this tool caught a few things we missed. Where I see real value is for new team leads—they don't know what 'good' pricing looks like. This could be a training resource."
 
 **On the AI summary:**
-> "The AI summary is... fine. It's not wrong, but it's generic. I'd rather see benchmarks—how does our spend compare to similar companies? That's the data I can't get anywhere else."
+> "The AI summary is decent. It's not wrong, but it feels a bit generic. What I'd really like to see is benchmarks—how does our spend compare to other companies our size in Amravati or Maharashtra? That's the data I can't get anywhere else."
+
+**On Spring Boot development:**
+> "Most AI tools are optimized for Python and JavaScript. For Spring Boot and Java development, we've found that Claude Pro works better than ChatGPT. The audit picked up on that—it recommended Claude over ChatGPT for our use case. That's smart."
 
 ### Most Surprising Insight
-J.L. pointed out that the audit doesn't account for negotiated enterprise pricing. This is a real limitation—larger companies often pay less than list price. But J.L. also saw value in using the tool as an educational resource for new managers, which I hadn't considered.
+Deepak appreciated that the audit understood their Spring Boot tech stack and recommended tools accordingly. He also pointed out that the audit doesn't account for the value of centralized billing and admin controls, which matter more as teams grow. However, he found value in using the tool to educate junior team leads about AI tool pricing and best practices.
 
 ### What It Changed in Design
-Added a disclaimer that the audit uses list pricing and doesn't account for custom enterprise deals. Also added "benchmark mode" to the Week 2 wishlist in REFLECTION.md—comparing spend to similar companies is a feature that would appeal to sophisticated buyers like J.L. Realized that the tool's primary audience is smaller teams (5-20 people), not enterprise. That's okay—focus on the core audience.
+Added a disclaimer that the audit uses list pricing and focuses on individual productivity. For larger teams (15+), enterprise features like centralized billing, SSO, and admin controls may justify higher-tier plans even if the audit suggests downgrades. Also added "benchmark mode" to the future roadmap—comparing spend to similar companies is a feature that would appeal to established companies like Dotcom Infotech. Realized that the tool's primary audience is smaller teams (5-15 people), not large enterprises. That's okay—focus on the core audience.
 
 ---
 
 ## Synthesis
 
 ### Common Themes
-1. **Lack of visibility:** Most teams don't track AI tool spend systematically
-2. **Sales-driven upgrades:** Users upgrade because sales reps push them, not because they need features
-3. **Redundancy blindness:** Users don't realize they're paying for overlapping tools
-4. **Time scarcity:** No one has time to research pricing tiers and compare options
+1. **Lack of visibility:** Most teams don't track AI tool spend systematically, even established companies
+2. **Sales-driven upgrades:** Users upgrade because they think they need premium features, not always based on actual requirements
+3. **Redundancy blindness:** Users don't realize they're paying for overlapping tools (especially Cursor + Copilot)
+4. **Time scarcity:** No one has time to research pricing tiers and compare options across tools
+5. **Local context matters:** Amravati companies are cost-conscious and appreciate tools that help optimize spending
 
 ### Contradictions
-- M.K. wanted aggressive recommendations ("tell me what to cut")
-- S.P. wanted validation ("tell me I'm doing okay")
-- J.L. wanted benchmarks ("tell me how I compare to others")
+- Amit wanted aggressive recommendations ("tell me what to cut")
+- Akshay wanted validation ("tell me I'm doing okay")
+- Deepak wanted benchmarks ("tell me how I compare to others")
 
-**Resolution:** Tailor the message based on savings amount. High savings = aggressive recommendations. Low savings = validation. Future feature = benchmarks.
+**Resolution:** Tailor the message based on savings amount. High savings = aggressive recommendations. Low savings = validation. Future feature = regional benchmarks.
 
 ### Design Decisions Validated
-- No signup flow (all three users mentioned they wouldn't have tried it otherwise)
-- Shareable URLs (M.K. wanted to share with the CFO, S.P. wanted to share with co-founder)
-- AI summary (all three read it, even though J.L. found it generic)
+- No signup flow (all three CEOs mentioned they wouldn't have tried it otherwise)
+- Shareable URLs (Amit wanted to share with his finance person, Deepak wanted to share with team leads)
+- AI summary (all three read it and found it useful, though Deepak wanted more depth)
+- Tech stack awareness (Deepak appreciated that the tool understood Spring Boot needs)
 
 ### Design Decisions Challenged
-- List pricing assumption (J.L. pointed out negotiated deals aren't captured)
-- Redundancy detection (S.P. struggled with "pick one" recommendation)
-- Enterprise focus (J.L. said the tool is better for smaller teams)
+- List pricing assumption (Deepak pointed out enterprise features justify higher costs for larger teams)
+- Redundancy detection (Akshay struggled with "pick one" recommendation between Claude and ChatGPT)
+- Enterprise focus (Deepak said the tool is better for smaller teams, which is fine)
+
+### Regional Insights from Amravati
+- **Cost sensitivity:** Bootstrapped and growing companies are very conscious about monthly expenses
+- **Tech stack diversity:** Django (LitsBros), Flask (JK Innovative), Spring Boot (Dotcom) - tool recommendations need to account for this
+- **Team size sweet spot:** 5-15 person teams are the ideal audience - small enough to lack formal procurement, large enough to have meaningful spend
+- **Trust factor:** Local companies appreciate honest, straightforward recommendations without sales pressure
 
 ### Next Steps
-- Add disclaimer about list pricing vs. negotiated deals
+- Add disclaimer about list pricing vs. enterprise features for larger teams
 - Soften redundancy recommendations (suggest instead of prescribe)
-- Focus marketing on 5-20 person teams, not enterprise
-- Build benchmark mode for Week 2 (high demand from sophisticated users)
+- Focus marketing on 5-15 person teams in tier-2 cities
+- Build regional benchmark mode for future versions (compare to similar companies in Maharashtra)
+- Consider adding tech stack-specific recommendations (Java/Spring vs Python/Django vs Node.js)
+
+### Interview Locations
+All interviews conducted in-person at company offices in Amravati, Maharashtra. This provided valuable context about the local startup ecosystem and the specific challenges faced by growing software companies in tier-2 cities.
