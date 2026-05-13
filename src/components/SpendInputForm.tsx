@@ -89,18 +89,21 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold mb-4">Your AI Tools</h2>
+        <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
+          <span className="text-blue-400">💰</span>
+          Your AI Tools
+        </h2>
         <div className="space-y-4">
           {tools.map((tool, index) => (
-            <div key={index} className="bg-gray-800 p-4 rounded-lg space-y-3">
+            <div key={index} className="glass rounded-xl p-5 space-y-3 card-hover border border-gray-700/50">
               <div className="flex items-start gap-3">
-                <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Tool</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-300">Tool</label>
                     <select
                       value={tool.tool}
                       onChange={(e) => updateTool(index, 'tool', e.target.value)}
-                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                      className="w-full glass border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       required
                     >
                       {TOOLS.map(t => (
@@ -110,11 +113,11 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium mb-1">Plan</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-300">Plan</label>
                     <select
                       value={tool.plan}
                       onChange={(e) => updateTool(index, 'plan', e.target.value)}
-                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                      className="w-full glass border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       required
                     >
                       {getPlansForTool(tool.tool).map(p => (
@@ -125,12 +128,12 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
                   
                   {tool.plan === 'api' ? (
                     <div>
-                      <label className="block text-sm font-medium mb-1">Monthly Spend ($)</label>
+                      <label className="block text-sm font-semibold mb-2 text-gray-300">Monthly Spend ($)</label>
                       <input
                         type="number"
                         value={tool.monthlySpend || ''}
                         onChange={(e) => updateTool(index, 'monthlySpend', parseFloat(e.target.value) || 0)}
-                        className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                        className="w-full glass border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="0"
                         min="0"
                         required
@@ -138,12 +141,12 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
                     </div>
                   ) : (
                     <div>
-                      <label className="block text-sm font-medium mb-1">Seats</label>
+                      <label className="block text-sm font-semibold mb-2 text-gray-300">Seats</label>
                       <input
                         type="number"
                         value={tool.seats || 1}
                         onChange={(e) => updateTool(index, 'seats', parseInt(e.target.value) || 1)}
-                        className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                        className="w-full glass border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         min="1"
                         required
                       />
@@ -155,7 +158,7 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
                   <button
                     type="button"
                     onClick={() => removeTool(index)}
-                    className="mt-7 p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded"
+                    className="mt-8 p-2.5 text-red-400 hover:text-red-300 hover:bg-red-900/30 rounded-lg transition-all"
                     aria-label="Remove tool"
                   >
                     <Trash2 size={20} />
@@ -168,7 +171,7 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
           <button
             type="button"
             onClick={addTool}
-            className="flex items-center gap-2 text-blue-400 hover:text-blue-300 font-medium"
+            className="flex items-center gap-2 text-blue-400 hover:text-blue-300 font-semibold px-4 py-2 rounded-lg hover:bg-blue-500/10 transition-all"
           >
             <Plus size={20} />
             Add Another Tool
@@ -178,23 +181,23 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium mb-2">Team Size</label>
+          <label className="block text-sm font-semibold mb-2 text-gray-300">Team Size</label>
           <input
             type="number"
             value={teamSize}
             onChange={(e) => setTeamSize(parseInt(e.target.value) || 1)}
-            className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2 text-white"
+            className="w-full glass border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             min="1"
             required
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium mb-2">Primary Use Case</label>
+          <label className="block text-sm font-semibold mb-2 text-gray-300">Primary Use Case</label>
           <select
             value={primaryUseCase}
             onChange={(e) => setPrimaryUseCase(e.target.value as FormData['primaryUseCase'])}
-            className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2 text-white"
+            className="w-full glass border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
           >
             {USE_CASES.map(uc => (
@@ -206,9 +209,9 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
 
       <button
         type="submit"
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl glow btn-pulse text-lg"
       >
-        Audit My Spend
+        🚀 Audit My Spend
       </button>
     </form>
   );
