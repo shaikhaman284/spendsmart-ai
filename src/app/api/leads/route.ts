@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdminClient } from '@/lib/supabase';
 import { Lead } from '@/lib/types';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-load Resend client
+function getResendClient() {
+  return new Resend(process.env.RESEND_API_KEY || '');
+}
 
 async function checkRateLimit(ipAddress: string): Promise<boolean> {
+  const supabaseAdmin = getSupabaseAdminClient();
   const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
   
   const { data, error } = await supabaseAdmin
@@ -46,6 +50,7 @@ async function checkRateLimit(ipAddress: string): Promise<boolean> {
 
 async function sendConfirmationEmail(email: string, auditId: string) {
   try {
+    const resend = getResendClient();
     await resend.emails.send({
       from: 'SpendSmart AI <noreply@credex.rocks>',
       to: email,
@@ -90,6 +95,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Save lead to Supabase
+    const supabaseAdmin = getSupabaseAdminClient();
     const { error } = await supabaseAdmin
       .from('leads')
       .insert({

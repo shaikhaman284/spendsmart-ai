@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdminClient } from '@/lib/supabase';
 import { auditEngine, calculateTotalSavings } from '@/lib/auditEngine';
 import { FormData, AuditResult } from '@/lib/types';
 import Groq from 'groq-sdk';
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || '',
-});
+// Lazy-load Groq client to avoid build-time initialization
+function getGroqClient() {
+  return new Groq({
+    apiKey: process.env.GROQ_API_KEY || '',
+  });
+}
 
 async function generateAISummary(formData: FormData, results: AuditResult[]): Promise<string> {
   try {
@@ -26,7 +29,7 @@ Biggest saving: ${biggestSaving?.tool || 'N/A'} - $${biggestSaving?.savings || 0
 
 Write a personalized 100-word summary.`;
 
-    const completion = await groq.chat.completions.create({
+    const completion = await getGroqClient().chat.completions.create({
       model: 'llama-3.3-70b-versatile',
       messages: [
         {
@@ -75,6 +78,7 @@ export async function POST(request: NextRequest) {
     const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder');
     
     if (!isPlaceholder) {
+      const supabaseAdmin = getSupabaseAdminClient();
       const { error } = await supabaseAdmin
         .from('audits')
         .insert({

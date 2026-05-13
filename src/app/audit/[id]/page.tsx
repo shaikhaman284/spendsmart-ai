@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import AuditResultsClient from './AuditResultsClient';
-import { supabase } from '@/lib/supabase';
+import { getSupabaseClient } from '@/lib/supabase';
 import { formatCurrency } from '@/lib/utils';
 import { AuditResult } from '@/lib/types';
 
@@ -10,6 +10,7 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const supabase = getSupabaseClient();
   const { data } = await supabase
     .from('audits')
     .select('total_savings')
@@ -42,6 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function AuditPage({ params }: Props) {
+  const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from('audits')
     .select('*')
