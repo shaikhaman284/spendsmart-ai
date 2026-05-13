@@ -35,3 +35,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# internal planning files
+GIT_COMMIT_PLAN.md
+create-commits.bat
+remove-internal-files.bat
+DATES_UPDATED.md
+FINAL_DATES_SUMMARY.md
+CHECKLIST.md
