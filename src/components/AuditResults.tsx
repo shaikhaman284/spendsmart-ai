@@ -63,33 +63,35 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
   return (
     <div className="space-y-8">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-10 text-center shadow-2xl glow">
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-4">
+      <div className="gradient-primary rounded-2xl p-10 text-center card-shadow-xl text-white">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
           {totalMonthlySavings > 0 ? (
-            <>💰 Save {formatCurrency(totalMonthlySavings)}/month</>
+            <>Save {formatCurrency(totalMonthlySavings)}/month</>
           ) : (
-            <>✨ You&apos;re Spending Well!</>
+            <>You&apos;re Spending Well!</>
           )}
         </h1>
         {totalMonthlySavings > 0 && (
-          <p className="text-3xl md:text-4xl opacity-90 font-bold">
+          <p className="text-2xl md:text-3xl opacity-90 font-semibold">
             {formatCurrency(totalAnnualSavings)} annually
           </p>
         )}
       </div>
 
       {/* Email Report Section */}
-      <div className="glass rounded-2xl p-8 border border-gray-700/50">
+      <div className="bg-white rounded-2xl p-8 card-shadow-lg border border-gray-200">
         <div className="flex items-center gap-3 mb-4">
-          <Mail className="text-blue-400" size={28} />
-          <h2 className="text-2xl font-bold">Get Your Report via Email</h2>
+          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+            <Mail className="text-blue-600" size={20} />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">Get Your Report via Email</h2>
         </div>
         
         {emailSent ? (
-          <div className="bg-green-500/20 border border-green-500/50 rounded-xl p-6 text-center">
-            <CheckCircle className="mx-auto mb-3 text-green-400" size={48} />
-            <p className="text-lg font-semibold text-green-300">Report sent successfully!</p>
-            <p className="text-gray-400 mt-2">Check your inbox for the detailed audit report.</p>
+          <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+            <CheckCircle className="mx-auto mb-3 text-green-600" size={48} />
+            <p className="text-lg font-semibold text-green-800">Report sent successfully!</p>
+            <p className="text-gray-600 mt-2">Check your inbox for the detailed audit report.</p>
           </div>
         ) : (
           <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-3">
@@ -98,16 +100,16 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email address"
-              className="flex-1 glass border border-gray-600 rounded-xl px-5 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 bg-white border border-gray-300 rounded-xl px-5 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
               disabled={emailSending}
             />
             <button
               type="submit"
               disabled={emailSending}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              className="btn-primary text-white font-bold py-3 px-8 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
-              {emailSending ? 'Sending...' : '📧 Send Report'}
+              {emailSending ? 'Sending...' : 'Send Report'}
             </button>
           </form>
         )}
@@ -115,43 +117,40 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
 
       {/* AI Summary */}
       {aiSummary && (
-        <div className="glass rounded-2xl p-8 border border-blue-500/30 card-hover">
-          <h2 className="text-2xl font-bold mb-4 flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
-              <AlertCircle className="text-blue-400" size={24} />
+        <div className="bg-blue-50 rounded-2xl p-8 border border-blue-200 card-hover">
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-3 text-gray-900">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <AlertCircle className="text-blue-600" size={20} />
             </div>
             AI Analysis
           </h2>
-          <p className="text-gray-300 leading-relaxed text-lg">{aiSummary}</p>
+          <p className="text-gray-700 leading-relaxed text-lg">{aiSummary}</p>
         </div>
       )}
 
       {/* Per-Tool Results */}
       <div>
-        <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-          <span>📊</span>
+        <h2 className="text-3xl font-bold mb-6 text-gray-900">
           Tool-by-Tool Breakdown
         </h2>
         <div className="grid gap-5">
           {results.map((result, index) => (
             <div
               key={index}
-              className="glass rounded-2xl p-6 border border-gray-700/50 card-hover"
+              className="bg-white rounded-2xl p-6 border border-gray-200 card-shadow card-hover"
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex-1">
-                  <h3 className="text-2xl font-bold capitalize mb-3">
+                  <h3 className="text-2xl font-bold capitalize mb-3 text-gray-900">
                     {result.tool.replace(/_/g, ' ')}
                   </h3>
-                  <p className="text-gray-300 mb-4 text-lg">{result.reason}</p>
-                  <div className="flex flex-wrap gap-6 text-sm">
-                    <div className="bg-gray-800/50 px-4 py-2 rounded-lg">
-                      <span className="text-gray-400">Current: </span>
-                      <span className="font-bold text-white">{formatCurrency(result.currentSpend)}/mo</span>
+                  <p className="text-gray-600 mb-4 text-base leading-relaxed">{result.reason}</p>
+                  <div className="flex flex-wrap gap-3">
+                    <div className="badge badge-blue">
+                      Current: <span className="font-bold ml-1">{formatCurrency(result.currentSpend)}/mo</span>
                     </div>
-                    <div className="bg-gray-800/50 px-4 py-2 rounded-lg">
-                      <span className="text-gray-400">Action: </span>
-                      <span className="font-bold text-blue-300">{result.recommendedAction}</span>
+                    <div className="badge badge-pink">
+                      Action: <span className="font-bold ml-1">{result.recommendedAction}</span>
                     </div>
                   </div>
                 </div>
@@ -159,23 +158,23 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
                 <div className="flex items-center gap-4">
                   {result.savings > 0 ? (
                     <>
-                      <div className="w-14 h-14 bg-green-500/20 rounded-full flex items-center justify-center">
-                        <TrendingDown className="text-green-400" size={32} />
+                      <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                        <TrendingDown className="text-green-600" size={28} />
                       </div>
                       <div className="text-right">
-                        <div className="text-3xl font-bold text-green-400">
+                        <div className="text-3xl font-bold text-green-600">
                           {formatCurrency(result.savings)}
                         </div>
-                        <div className="text-sm text-gray-400">saved/mo</div>
+                        <div className="text-sm text-gray-500 font-medium">saved/mo</div>
                       </div>
                     </>
                   ) : (
                     <>
-                      <div className="w-14 h-14 bg-gray-700/50 rounded-full flex items-center justify-center">
-                        <CheckCircle className="text-gray-400" size={32} />
+                      <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center">
+                        <CheckCircle className="text-gray-500" size={28} />
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-semibold text-gray-400">
+                        <div className="text-xl font-semibold text-gray-500">
                           Optimized
                         </div>
                       </div>
@@ -190,27 +189,27 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
 
       {/* CTA Section */}
       {hasSignificantSavings ? (
-        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-10 text-center shadow-2xl glow">
-          <h2 className="text-4xl font-bold mb-4">🎯 Get These Savings via Credex Credits</h2>
-          <p className="text-xl mb-8 opacity-90">
+        <div className="gradient-success rounded-2xl p-10 text-center card-shadow-xl text-white">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Get These Savings via Credex Credits</h2>
+          <p className="text-lg md:text-xl mb-8 opacity-90">
             Credex helps startups optimize AI spend with flexible credits and expert guidance.
           </p>
           <a
             href="https://credex.rocks"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-white text-green-700 font-bold py-4 px-10 rounded-xl hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl text-lg"
+            className="inline-block bg-white text-green-700 font-bold py-4 px-10 rounded-xl hover:bg-gray-50 transition-all card-shadow-lg text-lg"
           >
             Learn More About Credex →
           </a>
         </div>
       ) : totalMonthlySavings < 100 ? (
-        <div className="glass rounded-2xl p-10 text-center border border-green-500/30">
-          <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="text-green-400" size={48} />
+        <div className="bg-green-50 rounded-2xl p-10 text-center border border-green-200">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="text-green-600" size={40} />
           </div>
-          <h2 className="text-3xl font-bold mb-4">You&apos;re Spending Well!</h2>
-          <p className="text-gray-300 text-lg">
+          <h2 className="text-3xl font-bold mb-4 text-gray-900">You&apos;re Spending Well!</h2>
+          <p className="text-gray-600 text-lg">
             Your AI tool stack is already optimized. We&apos;ll notify you if better options become available.
           </p>
         </div>
@@ -218,9 +217,8 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
 
       {/* Share Section */}
       {auditId && (
-        <div className="glass rounded-2xl p-8 border border-gray-700/50">
-          <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
-            <span>🔗</span>
+        <div className="bg-white rounded-2xl p-8 border border-gray-200 card-shadow">
+          <h3 className="text-2xl font-bold mb-4 text-gray-900">
             Share Your Audit
           </h3>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -228,11 +226,11 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
               type="text"
               value={`${window.location.origin}/audit/${auditId}`}
               readOnly
-              className="flex-1 glass border border-gray-600 rounded-xl px-5 py-3 text-white"
+              className="flex-1 bg-gray-50 border border-gray-300 rounded-xl px-5 py-3 text-gray-700"
             />
             <button
               onClick={handleCopy}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 whitespace-nowrap"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all card-shadow flex items-center justify-center gap-2 whitespace-nowrap"
             >
               {copied ? (
                 <>

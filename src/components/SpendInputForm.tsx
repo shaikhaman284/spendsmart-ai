@@ -89,21 +89,20 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-          <span className="text-blue-400">💰</span>
+        <h2 className="text-2xl font-bold mb-6 text-gray-900">
           Your AI Tools
         </h2>
         <div className="space-y-4">
           {tools.map((tool, index) => (
-            <div key={index} className="glass rounded-xl p-5 space-y-3 card-hover border border-gray-700/50">
+            <div key={index} className="bg-gray-50 rounded-xl p-5 space-y-3 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all">
               <div className="flex items-start gap-3">
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-300">Tool</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">Tool</label>
                     <select
                       value={tool.tool}
                       onChange={(e) => updateTool(index, 'tool', e.target.value)}
-                      className="w-full glass border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       required
                     >
                       {TOOLS.map(t => (
@@ -113,11 +112,11 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-300">Plan</label>
+                    <label className="block text-sm font-semibold mb-2 text-gray-700">Plan</label>
                     <select
                       value={tool.plan}
                       onChange={(e) => updateTool(index, 'plan', e.target.value)}
-                      className="w-full glass border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       required
                     >
                       {getPlansForTool(tool.tool).map(p => (
@@ -128,12 +127,12 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
                   
                   {tool.plan === 'api' ? (
                     <div>
-                      <label className="block text-sm font-semibold mb-2 text-gray-300">Monthly Spend ($)</label>
+                      <label className="block text-sm font-semibold mb-2 text-gray-700">Monthly Spend ($)</label>
                       <input
                         type="number"
                         value={tool.monthlySpend || ''}
                         onChange={(e) => updateTool(index, 'monthlySpend', parseFloat(e.target.value) || 0)}
-                        className="w-full glass border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="0"
                         min="0"
                         required
@@ -141,12 +140,12 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
                     </div>
                   ) : (
                     <div>
-                      <label className="block text-sm font-semibold mb-2 text-gray-300">Seats</label>
+                      <label className="block text-sm font-semibold mb-2 text-gray-700">Seats</label>
                       <input
                         type="number"
                         value={tool.seats || 1}
                         onChange={(e) => updateTool(index, 'seats', parseInt(e.target.value) || 1)}
-                        className="w-full glass border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         min="1"
                         required
                       />
@@ -158,7 +157,7 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
                   <button
                     type="button"
                     onClick={() => removeTool(index)}
-                    className="mt-8 p-2.5 text-red-400 hover:text-red-300 hover:bg-red-900/30 rounded-lg transition-all"
+                    className="mt-8 p-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all"
                     aria-label="Remove tool"
                   >
                     <Trash2 size={20} />
@@ -171,7 +170,7 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
           <button
             type="button"
             onClick={addTool}
-            className="flex items-center gap-2 text-blue-400 hover:text-blue-300 font-semibold px-4 py-2 rounded-lg hover:bg-blue-500/10 transition-all"
+            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold px-4 py-2 rounded-lg hover:bg-blue-50 transition-all"
           >
             <Plus size={20} />
             Add Another Tool
@@ -181,23 +180,23 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-semibold mb-2 text-gray-300">Team Size</label>
+          <label className="block text-sm font-semibold mb-2 text-gray-700">Team Size</label>
           <input
             type="number"
             value={teamSize}
             onChange={(e) => setTeamSize(parseInt(e.target.value) || 1)}
-            className="w-full glass border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             min="1"
             required
           />
         </div>
         
         <div>
-          <label className="block text-sm font-semibold mb-2 text-gray-300">Primary Use Case</label>
+          <label className="block text-sm font-semibold mb-2 text-gray-700">Primary Use Case</label>
           <select
             value={primaryUseCase}
             onChange={(e) => setPrimaryUseCase(e.target.value as FormData['primaryUseCase'])}
-            className="w-full glass border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           >
             {USE_CASES.map(uc => (
@@ -209,9 +208,9 @@ export default function SpendInputForm({ onSubmit }: SpendInputFormProps) {
 
       <button
         type="submit"
-        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl glow btn-pulse text-lg"
+        className="w-full btn-primary text-white font-bold py-4 px-6 rounded-xl transition-all text-lg"
       >
-        🚀 Audit My Spend
+        Audit My Spend →
       </button>
     </form>
   );
