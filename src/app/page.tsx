@@ -169,7 +169,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white mt-20">
         <div className="container mx-auto px-4 py-8 max-w-6xl text-center text-gray-600 text-sm">
-          <p>© 2026 SpendSmart AI. Built by <a href="https://credex.rocks" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 font-semibold">Credex</a></p>
+          <p>© 2026 SpendSmart AI. Built by <a href="https://credex.rocks" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 font-semibold">Credex</a> for startups</p>
         </div>
       </footer>
     </main>
