@@ -73,6 +73,16 @@ export async function POST(request: NextRequest) {
     // Generate AI summary
     const aiSummary = await generateAISummary(formData, results);
     
+    // Build pricing snapshot at the time of audit creation
+    // Imported lazily to ensure the import is side-effect free at module level
+    const { PRICING_DATA, PRICING_VERSION, PRICING_LAST_UPDATED } = await import('@/lib/pricingData');
+    const pricingSnapshot = {
+      data: PRICING_DATA,
+      version: PRICING_VERSION,
+      lastUpdated: PRICING_LAST_UPDATED,
+      snapshotAt: new Date().toISOString(),
+    };
+
     // Save to Supabase (skip if using placeholder credentials)
     const auditId = uuidv4();
     const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder');
@@ -83,12 +93,17 @@ export async function POST(request: NextRequest) {
         .from('audits')
         .insert({
           id: auditId,
+          // Round 1 fields (preserved)
           audit_data: {
             formData,
             results,
             aiSummary,
           },
           total_savings: totalSavings.monthly,
+          // Round 2 fields (new)
+          input_stack: formData,
+          output_result: results,
+          pricing_snapshot: pricingSnapshot,
         });
       
       if (error) {

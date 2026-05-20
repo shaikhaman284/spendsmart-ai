@@ -110,6 +110,20 @@ export async function POST(request: NextRequest) {
       console.error('Supabase lead insert error:', error);
       throw new Error('Failed to save lead');
     }
+
+    // Round 2: Backfill user_email on the audit row so detect-changes
+    // can group notifications by email address.
+    if (lead.auditId) {
+      const { error: updateError } = await supabaseAdmin
+        .from('audits')
+        .update({ user_email: lead.email })
+        .eq('id', lead.auditId)
+        .is('user_email', null); // Only set if not already set
+      if (updateError) {
+        // Non-fatal: log but don't block the response
+        console.error('Failed to backfill user_email on audit:', updateError);
+      }
+    }
     
     // Send confirmation email
     await sendConfirmationEmail(lead.email, lead.auditId);
