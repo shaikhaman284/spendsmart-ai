@@ -45,3 +45,17 @@ export const PRICING_DATA = {
 } as const;
 
 export type ToolName = keyof typeof PRICING_DATA;
+
+/**
+ * Pricing data version — increment whenever PRICING_DATA changes.
+ * Used by the pricing change detector to short-circuit comparison
+ * when the version matches the stored snapshot version.
+ */
+export const PRICING_VERSION = '2026-05-20-v1';
+
+/**
+ * ISO timestamp of the last pricing update.
+ * Stored in every audit's pricing_snapshot for audit trail purposes.
+ */
+export const PRICING_LAST_UPDATED = '2026-05-20T00:00:00.000Z';
+
