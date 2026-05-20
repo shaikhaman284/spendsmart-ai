@@ -74,7 +74,6 @@ export async function POST(request: NextRequest) {
     const aiSummary = await generateAISummary(formData, results);
     
     // Build pricing snapshot at the time of audit creation
-    // Imported lazily to ensure the import is side-effect free at module level
     const { PRICING_DATA, PRICING_VERSION, PRICING_LAST_UPDATED } = await import('@/lib/pricingData');
     const pricingSnapshot = {
       data: PRICING_DATA,
@@ -89,7 +88,11 @@ export async function POST(request: NextRequest) {
     
     if (!isPlaceholder) {
       const supabaseAdmin = getSupabaseAdminClient();
-      const { error } = await supabaseAdmin
+
+      // Attempt Round 2 insert (with new columns).
+      // Falls back to Round 1 insert if migration hasn't been applied yet
+      // (Supabase returns PGRST204 when a column doesn't exist in the schema cache).
+      const { error: r2Error } = await supabaseAdmin
         .from('audits')
         .insert({
           id: auditId,
@@ -100,15 +103,38 @@ export async function POST(request: NextRequest) {
             aiSummary,
           },
           total_savings: totalSavings.monthly,
-          // Round 2 fields (new)
+          // Round 2 fields (new — requires round2-migration.sql to be run)
           input_stack: formData,
           output_result: results,
           pricing_snapshot: pricingSnapshot,
         });
-      
-      if (error) {
-        console.error('Supabase error:', error);
-        throw new Error('Failed to save audit');
+
+      if (r2Error) {
+        if (r2Error.code === 'PGRST204') {
+          // Migration not applied yet — fall back to Round 1 insert so audits keep working
+          console.warn(
+            '[Round 2] New columns not in schema — run supabase/round2-migration.sql to enable re-audit features. Using Round 1 fallback insert.'
+          );
+          const { error: r1Error } = await supabaseAdmin
+            .from('audits')
+            .insert({
+              id: auditId,
+              audit_data: {
+                formData,
+                results,
+                aiSummary,
+              },
+              total_savings: totalSavings.monthly,
+            });
+
+          if (r1Error) {
+            console.error('Supabase Round 1 fallback error:', r1Error);
+            throw new Error('Failed to save audit');
+          }
+        } else {
+          console.error('Supabase error:', r2Error);
+          throw new Error('Failed to save audit');
+        }
       }
     } else {
       console.log('Using placeholder Supabase - skipping database save');
