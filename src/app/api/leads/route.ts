@@ -120,10 +120,14 @@ export async function POST(request: NextRequest) {
         .eq('id', lead.auditId)
         .is('user_email', null); // Only set if not already set
       if (updateError) {
-        // Non-fatal: log but don't block the response
-        console.error('Failed to backfill user_email on audit:', updateError);
+        if (updateError.code === 'PGRST204') {
+          // Migration not applied yet — silently skip, non-fatal
+        } else {
+          console.error('Failed to backfill user_email on audit:', updateError);
+        }
       }
     }
+
     
     // Send confirmation email
     await sendConfirmationEmail(lead.email, lead.auditId);

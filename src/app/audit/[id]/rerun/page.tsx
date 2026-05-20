@@ -18,26 +18,78 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function RerunPage({ params }: Props) {
+/** 
+ * Safe fallback for pre-migration audits:
+ * Try selecting new columns; if PGRST204 (column not found), return null so
+ * the page can show a friendly "migration needed" message instead of 404.
+ */
+async function fetchAuditForRerun(id: string) {
   const supabase = getSupabaseClient();
+
+  // First try the full Round 2 select
   const { data, error } = await supabase
     .from('audits')
     .select('id, input_stack, output_result, pricing_snapshot, user_email')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
-  if (error || !data) {
+  if (error) {
+    // PGRST116 = row not found → hard 404
+    if (error.code === 'PGRST116') return { data: null, notFound: true };
+    // PGRST204 = column not found (migration not applied) → soft fallback
+    if (error.code === 'PGRST204') return { data: null, notFound: false, migrationNeeded: true };
+    // Any other error → hard 404
+    console.error('Rerun page fetch error:', error);
+    return { data: null, notFound: true };
+  }
+
+  return { data, notFound: false, migrationNeeded: false };
+}
+
+export default async function RerunPage({ params }: Props) {
+  const result = await fetchAuditForRerun(params.id);
+
+  if (result.notFound) {
     notFound();
   }
 
-  // If the audit was created before Round 2 (no input_stack), fall back gracefully
+  // Migration not applied yet — show a friendly message
+  if (result.migrationNeeded || !result.data) {
+    return (
+      <main className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <div className="text-center px-4 max-w-md">
+          <div className="text-5xl mb-4">⏳</div>
+          <h1 className="text-2xl font-bold mb-3">Re-run Not Available Yet</h1>
+          <p className="text-gray-400 mb-2">
+            The re-audit feature requires a database migration that hasn&apos;t been applied yet.
+          </p>
+          <p className="text-gray-500 text-sm mb-6">
+            Run <code className="bg-gray-800 px-2 py-0.5 rounded text-blue-400">supabase/round2-migration.sql</code> in
+            your Supabase SQL Editor, then submit a new audit to use the re-run feature.
+          </p>
+          <a
+            href="/"
+            className="inline-block bg-blue-600 hover:bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+          >
+            Start New Audit →
+          </a>
+        </div>
+      </main>
+    );
+  }
+
+  const { data } = result;
+
+  // Audit exists but was created before Round 2 columns were populated
   if (!data.input_stack || !data.output_result || !data.pricing_snapshot) {
     return (
       <main className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <div className="text-center px-4">
-          <h1 className="text-2xl font-bold mb-3">Re-run Not Available</h1>
-          <p className="text-gray-400 mb-6 max-w-md">
-            This audit was created before re-run support was added. Submit a new audit to get the latest recommendations.
+        <div className="text-center px-4 max-w-md">
+          <div className="text-5xl mb-4">📋</div>
+          <h1 className="text-2xl font-bold mb-3">Re-run Not Available for This Audit</h1>
+          <p className="text-gray-400 mb-6">
+            This audit was created before re-run support was added. Submit a new audit to get
+            full re-run and diff capabilities.
           </p>
           <a
             href="/"

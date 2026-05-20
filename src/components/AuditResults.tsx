@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AuditSummary } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils';
 import { TrendingDown, CheckCircle, AlertCircle, Mail, Copy, Check } from 'lucide-react';
@@ -18,6 +18,14 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [copied, setCopied] = useState(false);
+  // shareUrl is built client-side only — window is not defined during SSR
+  const [shareUrl, setShareUrl] = useState('');
+
+  useEffect(() => {
+    if (auditId && typeof window !== 'undefined') {
+      setShareUrl(`${window.location.origin}/audit/${auditId}`);
+    }
+  }, [auditId]);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,8 +61,8 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
   };
 
   const handleCopy = () => {
-    if (auditId) {
-      navigator.clipboard.writeText(`${window.location.origin}/audit/${auditId}`);
+    if (shareUrl) {
+      navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -215,8 +223,8 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
         </div>
       ) : null}
 
-      {/* Share + Re-run Section */}
-      {auditId && (
+      {/* Share + Re-run Section — only rendered once shareUrl is available client-side */}
+      {auditId && shareUrl && (
         <div className="bg-white rounded-2xl p-8 border border-gray-200 card-shadow space-y-4">
           <h3 className="text-2xl font-bold text-gray-900">
             Share Your Audit
@@ -224,7 +232,7 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
-              value={`${window.location.origin}/audit/${auditId}`}
+              value={shareUrl}
               readOnly
               className="flex-1 bg-gray-50 border border-gray-300 rounded-xl px-5 py-3 text-gray-700"
             />
@@ -264,4 +272,3 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
     </div>
   );
 }
-
