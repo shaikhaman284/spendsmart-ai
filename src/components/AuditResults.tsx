@@ -215,10 +215,10 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
         </div>
       ) : null}
 
-      {/* Share Section */}
+      {/* Share + Re-run Section */}
       {auditId && (
-        <div className="bg-white rounded-2xl p-8 border border-gray-200 card-shadow">
-          <h3 className="text-2xl font-bold mb-4 text-gray-900">
+        <div className="bg-white rounded-2xl p-8 border border-gray-200 card-shadow space-y-4">
+          <h3 className="text-2xl font-bold text-gray-900">
             Share Your Audit
           </h3>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -244,6 +244,20 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
                 </>
               )}
             </button>
+          </div>
+
+          {/* Round 2: Re-run link */}
+          <div className="flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 px-4 py-3">
+            <div>
+              <p className="text-sm font-semibold text-blue-800">🔄 Pricing changed since your audit?</p>
+              <p className="text-xs text-blue-600 mt-0.5">See what recommendations would look like today.</p>
+            </div>
+            <a
+              href={`/audit/${auditId}/rerun`}
+              className="shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap ml-4"
+            >
+              Check for Updates →
+            </a>
           </div>
         </div>
       )}

@@ -255,7 +255,7 @@ export async function sendReauditNotifications(
       const auditIds = affectedAudits.map((a) => a.auditId);
 
       await resend.emails.send({
-        from: 'SpendSmart AI <noreply@credex.rocks>',
+        from: 'SpendSmart AI <onboarding@resend.dev>',
         to: email,
         subject: 'Your AI spend audit has new recommendations',
         html,

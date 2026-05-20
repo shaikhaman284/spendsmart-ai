@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
     // Send email using Resend
     const resend = getResendClient();
     await resend.emails.send({
-      from: 'SpendSmart AI <noreply@credex.rocks>',
+      from: 'SpendSmart AI <onboarding@resend.dev>',
       to: email,
       subject: `Your AI Spend Audit: ${totalMonthlySavings > 0 ? `Save ${formatCurrency(totalMonthlySavings)}/month` : 'You\'re Optimized!'}`,
       html: htmlContent,
