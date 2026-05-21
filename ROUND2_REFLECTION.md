@@ -1,29 +1,32 @@
-# Round 2 Reflection — SpendSmart AI
+# Round 2 Reflection
 
-## 1. Most Uncomfortable Trade-off: Manual Endpoint Instead of Vercel Cron
+## 1. Most uncomfortable trade-off
 
-The most uncomfortable trade-off was choosing a manually-triggered POST endpoint (`/api/detect-changes`) over a proper Vercel Cron schedule. The discomfort comes from knowing it's the "right" answer technically — users should not have to think about when to trigger pricing change detection, it should happen automatically on a schedule — and I deliberately chose not to build it.
+The most uncomfortable trade-off was cutting the Vercel Cron schedule in favor of a manual endpoint. In production, you'd want automated daily checks for pricing changes, not manual triggers. But implementing cron properly means:
+- Setting up `vercel.json` cron config
+- Testing cron locally (requires Vercel CLI simulation)
+- Handling cron authentication (secret tokens to prevent abuse)
+- Debugging cron failures (logs are harder to access than API endpoint logs)
 
-The reasoning: Vercel Cron requires a deployed production environment to observe, it adds a `vercel.json` cron configuration that's invisible to reviewers running locally, and the behavior difference between "triggered manually" and "triggered by cron" is zero from the logic's perspective. The endpoint is identical either way. In a 36-hour window with four core features to ship, the cron config was the last 5% of the feature that consumed disproportionate setup overhead for an evaluator who may never see it fire.
+For a 36-hour build, this adds 4-6 hours of work with minimal demo value. The manual endpoint delivers the same core functionality — it detects changes, sends emails, and proves the system works. You can trigger it via Postman, curl, or a simple cron job on any server. The trade-off was time vs. production-readiness, and I chose time. If I had 24 more hours, cron would be the first thing I'd add.
 
-What made it uncomfortable wasn't the decision itself but the principle it violated: I believe in automation over manual steps, and shipping without the cron means someone has to remember to call the endpoint. For a real product, that's a support ticket waiting to happen. In a timed evaluation, it's a pragmatic call. I'd fix it the moment this went to production.
+## 2. If 24 more hours
 
----
+If I had 24 more hours, the first thing I'd build is a proper job queue for email sending. Right now, if 1000 users are affected by a pricing change, the `/api/detect-changes` endpoint sends 1000 emails synchronously. This works for demo purposes but would timeout in production (Vercel functions have a 10-second timeout on Hobby plan, 60 seconds on Pro).
 
-## 2. If 24 More Hours: Queue-Backed Email Sending at Scale
+I'd use Inngest or BullMQ to queue email jobs. The detection endpoint would enqueue jobs, and a separate worker would process them in batches. This also enables retry logic for failed emails, rate limiting to avoid Resend throttling, and better observability (you can see how many jobs are pending, failed, etc.).
 
-If I had 24 additional hours, the first thing I'd add is a proper job queue for the notification email sending step. Right now, if `detect-changes` runs and finds 500 affected users, it sends 500 emails synchronously in a single serverless function invocation — which will hit the Vercel function timeout and Resend's API rate limits simultaneously.
+Second priority would be adding Vercel Cron to trigger detection daily. Third would be an admin dashboard showing notification stats (how many audits checked, how many affected, email open rates, etc.). These three features would make the system production-ready.
 
-The correct architecture is: `detect-changes` enqueues one job per affected user into a queue (Inngest, BullMQ via Upstash, or even a Supabase-backed queue table), then each job processes independently with retries. This decouples detection from delivery, makes the system observable (you can see the queue depth), and makes partial failures recoverable.
+## 3. What Round 1 made harder
 
-Right behind the queue, I'd add the Vercel Cron schedule — once the queue is in place, the cron just needs to POST to `/api/detect-changes`, which enqueues the jobs, and the workers handle the rest. That combination (cron + queue + worker) is the production-ready pattern. I have the detection and email logic working; the missing layer is the plumbing between them that makes it durable and scalable.
+Round 1's `pricingData.ts` had no versioning or snapshot capability. It was just a static object exported for the audit engine to consume. I had to retrofit versioning by adding `PRICING_VERSION`, `PRICING_LAST_UPDATED`, and a `getPricingSnapshot()` function. This wasn't hard, but it's the kind of thing you'd design upfront if you knew re-audit was coming.
 
----
+More significantly, the audit result wasn't being persisted to Supabase on creation — it was only used for the shareable URL feature, and even then, it was stored in the generic `audit_data` JSONB blob. I had to backfill the logic to store `input_stack`, `output_result`, and `pricing_snapshot` as separate columns. This required careful migration planning to ensure audits kept working even if the migration hadn't been applied yet (graceful degradation).
 
-## 3. What Round 1 Made Harder
+If Round 1 had been designed with re-audit in mind, I would have:
+- Versioned pricing data from day one
+- Stored input/output as separate columns, not nested in `audit_data`
+- Added `user_email` to audits table upfront (instead of backfilling from leads)
 
-Two things in Round 1 created friction for Round 2 in ways I didn't anticipate when building them.
-
-The first was `pricingData.ts`. The file was a pure `const` export with no versioning, no metadata, no snapshot capability. When I needed to detect whether a snapshot was stale, I had nothing to compare versions against — I had to retrofit `PRICING_VERSION` and `PRICING_LAST_UPDATED` exports. This wasn't hard, but it broke the principle of not modifying existing files. Lesson: if you're building data that will need to be snapshotted and compared later, version it from day one. A `VERSION` field is a two-line addition at creation time and saves you a circular-dependency problem at comparison time.
-
-The second was the audit storage in Round 1. The original `audits` table stored a single `audit_data JSONB` blob containing `{ formData, results, aiSummary }` — everything in one field. For Round 1, that was fine; it's a shareable URL feature. But for Round 2, I needed `input_stack` and `output_result` as separate top-level columns so Supabase could efficiently filter and query them. I ended up storing the data twice — once in the original `audit_data` blob (for Round 1 compatibility) and once in the new columns — because I couldn't break the existing `/audit/[id]` page that reads `audit_data`. That duplication is the cost of the "don't rewrite existing files" constraint colliding with an underspecified data model in Round 1. If I'd known Round 2 was coming, I'd have stored `input_stack` and `output_result` as discrete columns from the start.
+That said, the Round 1 architecture was clean enough that extending it wasn't painful. The audit engine being pure functions (no side effects) made it easy to re-run audits with different pricing data. The Supabase schema was flexible enough to add columns without breaking existing code. Overall, Round 1 made Round 2 harder than it needed to be, but not prohibitively so.
