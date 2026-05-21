@@ -3,16 +3,34 @@ import { getSupabaseAdminClient } from '@/lib/supabase';
 import { compareAuditResults, groupAuditsByEmail } from '@/lib/pricingChangeDetector';
 import { sendReauditNotification } from '@/lib/notificationEmail';
 import { FormData, AuditResult } from '@/lib/types';
+import { PRICING_DATA } from '@/lib/pricingData';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
     
-    // Optional: simulate a pricing change for testing
+    // Create a modified pricing object if simulating a change
+    let modifiedPricing = PRICING_DATA;
     if (body.tool && body.new_price !== undefined) {
       console.log(`[Simulated pricing change] ${body.tool}: $${body.new_price}`);
-      // In a real implementation, you'd update PRICING_DATA here
-      // For now, we'll just log it and proceed with actual pricing
+      
+      // Clone PRICING_DATA and update the specified tool
+      modifiedPricing = JSON.parse(JSON.stringify(PRICING_DATA)) as typeof PRICING_DATA;
+      const toolName = body.tool.toLowerCase();
+      
+      // Find matching tool (case-insensitive)
+      for (const [key, plans] of Object.entries(modifiedPricing)) {
+        if (key.toLowerCase() === toolName || key.toLowerCase().includes(toolName)) {
+          // Update all plans for this tool with new price
+          for (const planKey of Object.keys(plans)) {
+            const typedKey = key as keyof typeof modifiedPricing;
+            const typedPlanKey = planKey as keyof typeof plans;
+            (modifiedPricing[typedKey][typedPlanKey] as { price: number }).price = body.new_price;
+          }
+          console.log(`Updated pricing for ${key}:`, modifiedPricing[key as keyof typeof modifiedPricing]);
+          break;
+        }
+      }
     }
 
     const supabaseAdmin = getSupabaseAdminClient();
@@ -44,7 +62,12 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Compare each audit against current pricing
+    console.log('Total audits fetched:', audits.length);
+    console.log('First audit pricing_snapshot:', JSON.stringify(audits[0]?.pricing_snapshot));
+    console.log('First audit user_email:', audits[0]?.user_email);
+    console.log('Comparing with modified pricing:', body.tool ? 'YES' : 'NO');
+
+    // Compare each audit against current pricing (or modified pricing if simulating)
     const comparisons = audits.map(audit => compareAuditResults({
       id: audit.id,
       user_email: audit.user_email,
@@ -55,7 +78,7 @@ export async function POST(request: NextRequest) {
         lastUpdated?: string; 
         data?: Record<string, Record<string, { name: string; price: number; isPerSeat?: boolean }>> 
       },
-    }));
+    }, modifiedPricing));
 
     // Filter to only affected audits
     const affectedComparisons = comparisons.filter(c => c.hasChanges);

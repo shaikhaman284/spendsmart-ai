@@ -99,12 +99,13 @@ export function compareAuditResults(
     input_stack: FormData;
     output_result: AuditResult[];
     pricing_snapshot: { version?: string; lastUpdated?: string; data?: Record<string, Record<string, { name: string; price: number; isPerSeat?: boolean }>> };
-  }
+  },
+  currentPricing: typeof PRICING_DATA = PRICING_DATA
 ): AuditComparison {
   const { id, user_email, input_stack, output_result, pricing_snapshot } = storedAudit;
 
   // Detect pricing changes
-  const pricingChanges = detectPricingChanges(pricing_snapshot);
+  const pricingChanges = detectPricingChanges(pricing_snapshot, currentPricing);
 
   // Re-run audit with current pricing
   const newResults = auditEngine(input_stack);

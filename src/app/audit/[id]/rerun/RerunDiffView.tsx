@@ -36,7 +36,13 @@ export default function RerunDiffView({ comparison }: Props) {
           </div>
 
           <h1 className="text-4xl md:text-5xl font-extrabold mb-6 text-gray-900">
-            Your Savings Changed
+            {savingsDelta > 0 ? (
+              <span className="text-green-600">↑ Savings Increased</span>
+            ) : savingsDelta < 0 ? (
+              <span className="text-red-600">↓ Savings Decreased</span>
+            ) : (
+              <span className="text-gray-500">No Change in Savings</span>
+            )}
           </h1>
 
           <div className="flex items-center justify-center gap-8 mb-4">
@@ -135,11 +141,15 @@ export default function RerunDiffView({ comparison }: Props) {
                     : 'border-gray-200 opacity-60'
                 }`}
               >
-                <h3 className="text-xl font-bold capitalize mb-4 text-gray-900">
+                <h3 className="text-xl font-bold capitalize mb-4 text-gray-900 flex items-center gap-3">
                   {tool.replace(/_/g, ' ')}
-                  {hasChanged && (
-                    <span className="ml-3 text-sm font-semibold text-yellow-600 bg-yellow-100 px-3 py-1 rounded-full">
-                      Changed
+                  {hasChanged ? (
+                    <span className="text-sm font-semibold text-yellow-700 bg-yellow-100 px-3 py-1 rounded-full">
+                      CHANGED
+                    </span>
+                  ) : (
+                    <span className="text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                      ✓ NO CHANGE
                     </span>
                   )}
                 </h3>
