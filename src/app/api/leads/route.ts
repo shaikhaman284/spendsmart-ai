@@ -58,7 +58,7 @@ async function sendConfirmationEmail(email: string, auditId: string) {
       html: `
         <h1>Your AI Spend Audit Results</h1>
         <p>Thank you for using SpendSmart AI! Your personalized audit is ready.</p>
-        <p><a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/audit/${auditId}">View Your Audit</a></p>
+        <p><a href="${process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')}/audit/${auditId}">View Your Audit</a></p>
         <p>Want to learn more about optimizing your AI spend? Visit <a href="https://credex.rocks">Credex</a>.</p>
       `,
     });

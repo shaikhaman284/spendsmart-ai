@@ -123,7 +123,7 @@ export async function GET(request: NextRequest) {
     <div class="icon">✓</div>
     <h1>You've Been Unsubscribed</h1>
     <p>You won't receive any more re-audit notifications from SpendSmart AI.</p>
-    <p>If you change your mind, you can always run a new audit at <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://spendsmart.credex.rocks'}">SpendSmart AI</a>.</p>
+    <p>If you change your mind, you can always run a new audit at <a href="${process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://spendsmart.credex.rocks')}">SpendSmart AI</a>.</p>
   </div>
 </body>
 </html>

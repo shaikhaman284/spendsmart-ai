@@ -15,7 +15,8 @@ export async function sendReauditNotification(
 ): Promise<boolean> {
   try {
     const resend = getResendClient();
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 
+                   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
     // Get unique pricing changes across all audits
     const allChanges = new Map<string, PricingChange>();
