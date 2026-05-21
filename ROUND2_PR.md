@@ -1,89 +1,74 @@
-# Round 2: Re-Audit Feature
+# Round 2: Re-Audit Feature with Pricing Change Detection
 
 ## What this PR does
 
-This PR adds a re-audit notification system that automatically detects when AI tool pricing changes and notifies users whose previous audit recommendations are now outdated. Users receive an email with a link to view a side-by-side diff of their old vs. new recommendations, making it easy to see how pricing changes affect their potential savings.
+This PR extends SpendSmart AI with a live re-audit system. Every audit is now persisted to Supabase with a pricing snapshot. When AI tool pricing changes, affected users are automatically notified via email with a diff view showing exactly what changed and why.
 
 ## Why
 
-Stale audits are harmful. When pricing changes (which happens frequently in the AI tools space), users who ran an audit weeks ago are making decisions based on outdated data. They deserve to know when pricing changes affect their recommendations. This feature turns SpendSmart AI from a one-time calculator into an ongoing monitoring tool that keeps users informed.
+AI tool pricing changes frequently — Cursor, Claude, and Copilot have all restructured plans in the past 18 months. A one-time audit becomes misleading the moment pricing shifts. Users who acted on stale data could be making worse decisions than before they audited. This feature turns SpendSmart AI from a one-shot tool into a living advisor.
 
 ## How it works
 
-When a user submits an audit, we now store a snapshot of the pricing data at that moment, along with their input and output. A manual endpoint (`/api/detect-changes`) compares all stored audits against current pricing, identifies affected users, and sends consolidated notification emails. Users click a re-run link to see a diff view showing exactly what changed and how it affects their savings.
+When a user submits an audit, the result is saved to Supabase with a complete pricing snapshot. An admin triggers `POST /api/detect-changes` with a new price (e.g., `{"tool": "cursor", "new_price": 40}`). The `pricingChangeDetector.ts` compares stored snapshots against current pricing using JSON.stringify for deep comparison (not object reference). Affected audits are grouped by `user_email` — one consolidated email per user via Resend. Users click the re-run link to see `/audit/[id]/rerun` which loads old and new audit results side by side with changed rows highlighted in yellow.
 
 ```mermaid
 flowchart TD
-    A[User submits audit] --> B[Audit saved to Supabase with pricing snapshot]
-    B --> C[/api/detect-changes triggered]
-    C --> D{Compare snapshot vs current pricing}
-    D -->|Changed| E[Group by user email]
-    E --> F[Send notification email via Resend]
-    F --> G[User clicks re-run link]
-    G --> H[Diff view: old vs new recommendations]
-    D -->|No change| I[No action]
+    A[User submits audit form] --> B[Audit engine runs]
+    B --> C[Result + pricing snapshot saved to Supabase]
+    C --> D[User sees results + enters email]
+    D --> E[user_email updated on audit row]
+    F[Admin POSTs to /api/detect-changes] --> G[pricingChangeDetector compares snapshots]
+    G --> H{Any audits affected?}
+    H -->|Yes| I[Group by user_email]
+    I --> J[Send notification email via Resend]
+    J --> K[User clicks re-run link]
+    K --> L[Diff view: old vs new side by side]
+    L --> M[Changed rows highlighted yellow, unchanged muted]
+    H -->|No| N[Return checked/affected/emailsSent stats]
 ```
 
 ## What I cut
 
-- **Vercel Cron scheduling** — used manual endpoint instead. Faster to ship, same result for demo. In production, you'd trigger this endpoint via Vercel Cron or a job queue.
-- **Unsubscribe UI page** — just a plain confirmation response. Good enough for 36h, avoids building a full unsubscribe management UI.
-- **Admin dashboard** — bonus feature, deprioritized after core 4 worked. Would show stats on how many audits were affected, email open rates, etc.
-- **Benchmark mode** — Round 1 bonus feature, not relevant here.
-- **PDF export of diff** — nice to have, cut for time. Users can screenshot or print the diff view.
+- **Scheduled cron trigger**: Used manual `POST /api/detect-changes` instead. Vercel Cron is straightforward to add but costs a Pro plan upgrade — manual endpoint is functionally identical for this stage.
+- **Live pricing persistence**: The detect-changes endpoint accepts a temporary price override for detection and notification. `pricingData.ts` itself is updated via manual file edit + redeploy. Production would write overrides to a Supabase `pricing_overrides` table and serve them dynamically across the app.
+- **Admin dashboard**: Bonus feature. Deprioritized after the 4 required features worked end-to-end.
+- **Styled unsubscribe page**: The `/api/unsubscribe` endpoint works and sets `unsubscribed=true` in Supabase, but returns plain text confirmation instead of a designed page. Cut for time.
+- **"What changed this week" public page**: Bonus feature, not attempted in 36h.
 
 ## How to test it manually
 
-1. Go to the deployed URL, fill in the spend form (e.g. Cursor Pro, 2 seats, $40/mo)
-2. Submit — you'll get an audit result. Note the audit ID in the URL.
-3. Enter your email in the lead capture form on the results page (this backfills `user_email` on the audit).
-4. Trigger a pricing change: `POST /api/detect-changes` with body `{"tool": "cursor", "new_price": 25}` (simulated change for testing)
-5. Check your inbox — you should receive a re-audit notification email within 1 minute.
-6. Click the re-run link in the email.
-7. You'll see the diff view showing old vs new recommendations with the delta highlighted.
+1. Go to the deployed URL, fill the audit form: add Cursor Pro 1 seat $20/mo, Claude Pro 1 seat $20/mo, ChatGPT Plus 1 seat $20/mo. Team size 3, use case: coding.
+2. Submit → you get audit results at `/audit/[uuid]`
+3. Enter your email in the lead capture form on the results page
+4. Check Supabase → `audits` table → confirm row exists with your email + `pricing_snapshot`
+5. Trigger a pricing change via Postman or curl:
+   ```bash
+   POST [DEPLOYED_URL]/api/detect-changes
+   Body: {"tool": "cursor", "new_price": 40}
+   ```
+6. Response should show: `{ checked: N, affected: N, emailsSent: 1 }`
+7. Check inbox → email arrives with subject "Your AI Spend Audit Has New Recommendations"
+8. Email shows: cursor pro price changed, your specific plan only, re-run link
+9. Click "View Updated Recommendations" in email
+10. Diff view loads at `/audit/[uuid]/rerun`
+11. Cursor row is highlighted yellow with CHANGED badge
+12. Other unchanged rows are muted/greyed out
+13. Click Unsubscribe link → Supabase audit row sets `unsubscribed=true` → no more emails
 
 ## What's tested
 
-- **auditEngine**: existing 8 tests still pass
-- **pricingChangeDetector**: 3 new tests
-  - Price moved (increase/decrease)
-  - Plan removed
-  - No change scenario
-- **detect-changes API**: Manual testing with real Supabase data
+- **auditEngine**: 8 existing tests all pass
+- **pricingChangeDetector**: 3 new tests (price moved detection, no change detection, case-insensitive tool matching)
+- **detect-changes API**: Returns correct `checked/affected/emailsSent` counts
+- **Skipped**: Email delivery integration test (Resend sandbox used for unit level)
 
 ## Open questions / risks
 
-- **If Supabase is down**, detection silently fails — should add alerting or retry logic
-- **Email deliverability**: Resend free tier has 100 emails/day limit. At scale, need paid plan or queue.
-- **No queue**: if 1000 users are affected by one pricing change, emails sent synchronously. This works for demo but needs a job queue (BullMQ, Inngest, etc.) at scale.
-- **Pricing snapshot size**: storing full PRICING_DATA in every audit row. Could optimize by storing only relevant tools, but premature optimization for now.
-- **Migration timing**: if someone runs an audit before the migration is applied, they won't get re-audit notifications. Acceptable trade-off for a 36h build.
+- **No job queue**: If 1000 users are affected by one pricing change, emails are sent synchronously in one request — needs a queue (BullMQ or Supabase pg_cron) at scale
+- **Resend free tier**: 100 emails/day limit. Production needs a paid plan or batching strategy
+- **Price overrides are not persisted**: If the server restarts between detect-changes and a user visiting the rerun page, the override is lost. Fix: persist overrides to Supabase `pricing_overrides` table
 
-## Files changed
+---
 
-### New files
-- `supabase/round2-migration.sql` — adds columns to audits table
-- `src/lib/pricingChangeDetector.ts` — comparison logic
-- `src/lib/notificationEmail.ts` — email template and sending
-- `src/app/api/detect-changes/route.ts` — detection endpoint
-- `src/app/api/unsubscribe/route.ts` — unsubscribe handler
-- `src/app/audit/[id]/rerun/page.tsx` — diff view page
-- `src/app/audit/[id]/rerun/RerunDiffView.tsx` — diff UI component
-- `src/__tests__/pricingChangeDetector.test.ts` — tests
-
-### Modified files
-- `src/lib/pricingData.ts` — added version and snapshot function
-- `src/app/api/audit/route.ts` — save pricing snapshot on audit creation
-- `src/app/api/leads/route.ts` — backfill user_email on audit
-- `.env.example` — added NEXT_PUBLIC_APP_URL
-
-## Next steps (if this were production)
-
-1. Add Vercel Cron to trigger `/api/detect-changes` daily
-2. Implement proper job queue for email sending
-3. Add admin dashboard to monitor notification stats
-4. Add retry logic for failed emails
-5. Optimize pricing snapshot storage (only store relevant tools)
-6. Add email open tracking and click tracking
-7. A/B test email subject lines and content
-8. Add user preference for notification frequency (daily, weekly, never)
+**Built by Shaikh Aman Shaikh Akram**

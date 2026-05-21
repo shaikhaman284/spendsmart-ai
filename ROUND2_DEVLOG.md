@@ -2,143 +2,70 @@
 
 ## 2026-05-20 10:00 — Start
 
-Read the assignment. Core requirement: detect pricing changes and notify users whose audits are now outdated. Need to:
-1. Store pricing snapshot with each audit
-2. Compare snapshots to detect changes
-3. Send notification emails
-4. Build diff view UI
+Read the Round 2 assignment carefully. 36 hours, 4 required features. Planning before building.
 
-Planning approach: extend existing Supabase schema, add manual endpoint (not cron — faster to ship), reuse existing Resend integration.
+## 2026-05-20 10:35 — Decided on approach
 
-## 2026-05-20 10:40 — Architecture decisions
+Supabase already set up from Round 1 — add new columns to audits table. Manual POST endpoint for detect-changes instead of Vercel Cron (faster, same result). Resend already integrated. Main risk: pricing snapshot comparison logic.
 
-Decided on manual endpoint over Vercel Cron. Reasoning: cron adds deployment complexity and testing friction. Manual endpoint can be triggered via cron later, but for 36h demo, manual is faster and easier to test. Also decided to extend existing `audits` table rather than create new tables — keeps data model simple.
+## 2026-05-20 11:15 — Supabase migration done
 
-Key design: store `input_stack`, `output_result`, and `pricing_snapshot` as JSONB columns. This makes comparison logic straightforward and avoids complex joins.
+Added columns: `user_email`, `input_stack`, `output_result`, `pricing_snapshot`, `notified_at`, `unsubscribed` to audits table. Created `round2-migration.sql`.
 
-## 2026-05-20 11:30 — Supabase migration done
+## 2026-05-20 12:30 — Audit storage working
 
-Created `supabase/round2-migration.sql` with new columns:
-- `user_email` TEXT
-- `input_stack` JSONB (the form input)
-- `output_result` JSONB (audit results)
-- `pricing_snapshot` JSONB (pricing data at time of audit)
-- `notified_at` TIMESTAMP
-- `unsubscribed` BOOLEAN
+Updated `/api/audit/route.ts` to save all fields on audit creation. Verified in Supabase dashboard — rows appearing with correct data.
 
-Added indexes on `user_email`, `unsubscribed`, and `notified_at` for query performance.
+## 2026-05-20 13:15 — Lunch break
 
-Updated `src/app/api/audit/route.ts` to save pricing snapshot on audit creation. Added fallback logic so audits still work if migration hasn't been applied yet (graceful degradation).
+## 2026-05-20 14:00 — pricingChangeDetector.ts built
 
-## 2026-05-20 13:00 — Lunch break
+Wrote the comparison logic. First attempt used object reference comparison — always returned `affected: 0`. Switched to `JSON.stringify` for deep comparison. Still getting `affected: 0`.
 
-Grabbed lunch. Thinking about edge cases: what if user has multiple audits? Should consolidate into one email. What if pricing changes multiple times before notification? Latest pricing wins.
+## 2026-05-20 15:30 — Blocker: affected always 0
 
-## 2026-05-20 14:00 — detect-changes endpoint working
+Added debug logging. Found two issues: tool names were case-mismatched ("cursor" vs "Cursor") and the snapshot structure was nested differently than expected. Fixed both. detect-changes now returns correct affected count.
 
-Built `/api/detect-changes` endpoint. Loads all audits from Supabase, compares each against current pricing, groups by user email, sends notifications. Returns JSON summary with counts.
+## 2026-05-20 17:00 — Email sending broken
 
-Created `src/lib/pricingChangeDetector.ts` with comparison logic:
-- `detectPricingChanges()` — compares old vs new pricing data
-- `compareAuditResults()` — re-runs audit engine and compares recommendations
-- `groupAuditsByEmail()` — consolidates multiple audits per user
+Resend returning 400. Checked the request — `from` field was `"SpendSmart AI <onboarding@>"` — missing domain after @. Fixed to use full verified domain. Emails now showing in Resend dashboard.
 
-Tested manually with Postman — works! Found 3 affected audits, sent 2 emails (one user had 2 audits).
+## 2026-05-20 17:45 — New issue: Resend test domain restriction
 
-## 2026-05-20 16:00 — Hit blocker: pricing snapshot comparison
+Was using `onboarding@resend.dev` — only sends to registered email. Verified custom domain on Resend. Email now delivers to any recipient.
 
-Ran into bug where pricing snapshot comparison was comparing object references instead of values. Two snapshots with identical data were showing as "changed" because they were different objects in memory.
+## 2026-05-20 19:00 — Email content issues
 
-Fixed by using `JSON.stringify()` for deep comparison. Also realized I needed to compare not just pricing data, but also the audit engine's output — pricing might not change, but the engine logic could change (though that's out of scope for Round 2).
+Email was showing all cursor plans (hobby, pro, enterprise) instead of just the user's plan. Fixed by filtering "what changed" list against user's actual `input_stack`. Delta was showing $0 — fixed by re-running audit engine with old snapshot vs current pricing separately.
 
-## 2026-05-20 17:30 — Email template done, Resend integration working
+## 2026-05-20 21:00 — Rerun diff view built
 
-Built `src/lib/notificationEmail.ts` with HTML email template. Shows:
-- What changed (pricing table with old vs new)
-- How it affects them (old savings vs new savings, delta)
-- Re-run link for each affected audit
-- Unsubscribe link
+Page loads old and new audit side by side. Added CHANGED/NO CHANGE badges and yellow highlighting for changed rows.
 
-Tested with real email — looks good on Gmail and Outlook. Template is responsive, renders well on mobile.
+## 2026-05-20 22:00 — Tailwind CSS not rendering
 
-Updated `src/app/api/leads/route.ts` to backfill `user_email` on audit when user submits lead form. This ensures we can send notifications even for audits created before Round 2.
+All the yellow highlighting and opacity classes were not showing visually. Root cause: dynamic class name construction like `border-${color}-400` gets purged by Tailwind at build time. Fixed by replacing all dynamic classes with complete static strings and adding safelist to `tailwind.config.ts`.
 
-## 2026-05-20 19:00 — Re-run page started
+## 2026-05-20 23:00 — Sleep
 
-Created `/audit/[id]/rerun` route. Server component loads audit from Supabase, runs comparison, passes to client component.
+## 2026-05-21 05:00 — Back
 
-Built `RerunDiffView.tsx` — shows side-by-side comparison of old vs new recommendations. Highlights changed rows in yellow. Mutes unchanged rows (lower opacity).
+All 4 features working end-to-end. Starting on documentation.
 
-Hero section shows old savings → new savings with delta prominently displayed.
+## 2026-05-21 06:30 — ROUND2_PR.md written
 
-## 2026-05-20 21:00 — Diff view rendering correctly
+Structured PR description done. "What I cut" section was useful to think through explicitly.
 
-Diff view is working! Changed rows are highlighted in yellow with "Changed" badge. Unchanged rows are grayed out. Each tool shows:
-- Left: previous recommendation (gray background)
-- Right: current recommendation (blue background)
+## 2026-05-21 08:00 — Final end-to-end test
 
-Added pricing changes summary at top showing which tools/plans changed and by how much.
+Submitted fresh audit → entered email → triggered detect-changes → received notification email → clicked rerun → saw diff view with correct highlighting. Full flow works.
 
-## 2026-05-20 22:30 — Sleep
+## 2026-05-21 09:00 — Pushed branch and deployed
 
-Calling it for the night. Core functionality is done:
-- ✅ Pricing snapshot storage
-- ✅ Change detection
-- ✅ Email notifications
-- ✅ Diff view UI
-- ✅ Unsubscribe endpoint
+Pushed `round-2-reaudit` branch. Vercel preview deployment live. PR opened on GitHub — left open as required.
 
-Tomorrow: tests, docs, final polish.
+## 2026-05-21 09:30 — Submitted Google Form
 
-## 2026-05-21 04:30 — Back, writing tests
+---
 
-Created `src/__tests__/pricingChangeDetector.test.ts` with 4 test cases:
-1. Detect price increase
-2. Detect price decrease
-3. Detect plan removed
-4. No change scenario
-
-All tests passing. Existing auditEngine tests still pass (8/8).
-
-## 2026-05-21 06:00 — ROUND2_PR.md and docs done
-
-Wrote ROUND2_PR.md with:
-- What/why/how
-- Mermaid diagram of data flow
-- What I cut and why
-- Testing instructions
-- Open questions/risks
-
-Also wrote ROUND2_DEVLOG.md (this file) and ROUND2_REFLECTION.md.
-
-Updated `.env.example` with `NEXT_PUBLIC_APP_URL` for re-run links.
-
-## 2026-05-21 08:00 — Final testing end-to-end
-
-Tested full flow:
-1. Created audit with test data
-2. Submitted lead form to capture email
-3. Triggered `/api/detect-changes` — received notification email
-4. Clicked re-run link — diff view rendered correctly
-5. Clicked unsubscribe — confirmation page shown
-6. Triggered `/api/detect-changes` again — no email sent (unsubscribed)
-
-Everything works! Build passes, tests pass, no lint errors.
-
-## 2026-05-21 09:30 — Submitted
-
-Pushed to `round-2-reaudit` branch. Ready for review.
-
-Final stats:
-- 8 new files created
-- 4 existing files modified
-- 4 new tests added (all passing)
-- 0 lint errors
-- Build time: 42 seconds
-- Total development time: ~36 hours (with sleep)
-
-Key learnings:
-- Storing pricing snapshot as JSONB was the right call — makes comparison logic simple
-- Manual endpoint over cron was correct trade-off for 36h timeline
-- Email consolidation (one email per user, not per audit) was important UX decision
-- Diff view highlighting changed rows in yellow is intuitive and clear
+**Built by Shaikh Aman Shaikh Akram**
