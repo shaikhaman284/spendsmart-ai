@@ -175,6 +175,6 @@ Built with:
 
 ---
 
-**Deployed URL:** [DEPLOYED_URL]
+**Deployed URL:** [[DEPLOYED_URL](https://spendsmart-ai.vercel.app/)]
 
 Built by [Credex](https://credex.rocks) 🚀
