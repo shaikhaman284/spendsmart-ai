@@ -142,7 +142,7 @@ function checkRecommendationsChanged(
   const oldMap = new Map(oldResults.map(r => [r.tool, r]));
   const newMap = new Map(newResults.map(r => [r.tool, r]));
 
-  for (const [tool, oldResult] of oldMap) {
+  for (const [tool, oldResult] of Array.from(oldMap.entries())) {
     const newResult = newMap.get(tool);
     if (!newResult) {
       return true;

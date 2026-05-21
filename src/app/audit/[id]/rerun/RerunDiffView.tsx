@@ -23,7 +23,7 @@ export default function RerunDiffView({ comparison }: Props) {
   const newMap = new Map(newRecommendations.map(r => [r.tool, r]));
 
   // Get all unique tools
-  const allTools = new Set([...oldMap.keys(), ...newMap.keys()]);
+  const allTools = new Set([...Array.from(oldMap.keys()), ...Array.from(newMap.keys())]);
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">

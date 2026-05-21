@@ -60,7 +60,7 @@ export default function AuditResultsClient({ auditData, auditId, totalSavings }:
         <div className="mt-6 rounded-xl border border-blue-500/30 bg-blue-950/30 px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
           <div>
             <p className="font-semibold text-blue-200 text-sm">🔄 Pricing changes since this audit?</p>
-            <p className="text-xs text-slate-400 mt-0.5">See a side-by-side diff of what's changed in your recommendations.</p>
+            <p className="text-xs text-slate-400 mt-0.5">See a side-by-side diff of what&apos;s changed in your recommendations.</p>
           </div>
           <a
             href={`/audit/${auditId}/rerun`}

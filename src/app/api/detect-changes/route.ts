@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '@/lib/supabase';
 import { compareAuditResults, groupAuditsByEmail } from '@/lib/pricingChangeDetector';
 import { sendReauditNotification } from '@/lib/notificationEmail';
+import { FormData, AuditResult } from '@/lib/types';
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,12 +45,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Compare each audit against current pricing
-    const comparisons = audits.map(audit => compareAuditResults(audit as {
-      id: string;
-      user_email: string | null;
-      input_stack: any;
-      output_result: any;
-      pricing_snapshot: any;
+    const comparisons = audits.map(audit => compareAuditResults({
+      id: audit.id,
+      user_email: audit.user_email,
+      input_stack: audit.input_stack as FormData,
+      output_result: audit.output_result as AuditResult[],
+      pricing_snapshot: audit.pricing_snapshot as { 
+        version?: string; 
+        lastUpdated?: string; 
+        data?: Record<string, Record<string, { name: string; price: number; isPerSeat?: boolean }>> 
+      },
     }));
 
     // Filter to only affected audits
