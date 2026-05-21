@@ -52,7 +52,7 @@ async function sendConfirmationEmail(email: string, auditId: string) {
   try {
     const resend = getResendClient();
     await resend.emails.send({
-      from: 'SpendSmart AI <onboarding@resend.dev>',
+      from: 'SpendSmart AI By Shaikh Aman <noreply@awm27.shop>',
       to: email,
       subject: 'Your AI Spend Audit is Ready',
       html: `
