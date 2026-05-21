@@ -35,13 +35,13 @@ export default function RerunDiffView({ comparison }: Props) {
             <span className="text-sm text-blue-700 font-semibold">Updated Recommendations</span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-6 text-gray-900">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-6">
             {savingsDelta > 0 ? (
-              <span className="text-green-600">↑ Savings Increased</span>
+              <span className="text-green-400">↑ Savings increased from {formatCurrency(oldTotalSavings)} to {formatCurrency(newTotalSavings)}/mo</span>
             ) : savingsDelta < 0 ? (
-              <span className="text-red-600">↓ Savings Decreased</span>
+              <span className="text-red-400">↓ Savings decreased from {formatCurrency(oldTotalSavings)} to {formatCurrency(newTotalSavings)}/mo</span>
             ) : (
-              <span className="text-gray-500">No Change in Savings</span>
+              <span className="text-gray-400">✓ No change in savings</span>
             )}
           </h1>
 
@@ -137,19 +137,19 @@ export default function RerunDiffView({ comparison }: Props) {
                 key={tool}
                 className={`bg-white rounded-2xl p-6 border-2 transition-all ${
                   hasChanged
-                    ? 'border-yellow-400 bg-yellow-50/30'
-                    : 'border-gray-200 opacity-60'
+                    ? 'border-l-4 border-yellow-400 bg-yellow-950 border-yellow-400'
+                    : 'border-gray-200 opacity-40'
                 }`}
               >
                 <h3 className="text-xl font-bold capitalize mb-4 text-gray-900 flex items-center gap-3">
                   {tool.replace(/_/g, ' ')}
                   {hasChanged ? (
-                    <span className="text-sm font-semibold text-yellow-700 bg-yellow-100 px-3 py-1 rounded-full">
+                    <span className="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded font-bold">
                       CHANGED
                     </span>
                   ) : (
-                    <span className="text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                      ✓ NO CHANGE
+                    <span className="text-xs bg-gray-600 text-gray-300 px-2 py-0.5 rounded">
+                      NO CHANGE
                     </span>
                   )}
                 </h3>

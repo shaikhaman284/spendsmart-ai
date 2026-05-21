@@ -20,6 +20,7 @@ export interface AuditComparison {
   oldTotalSavings: number;
   newTotalSavings: number;
   savingsDelta: number;
+  inputStack: FormData;
 }
 
 /**
@@ -107,9 +108,13 @@ export function compareAuditResults(
   // Detect pricing changes
   const pricingChanges = detectPricingChanges(pricing_snapshot, currentPricing);
 
-  // Re-run audit with current pricing
+  // Re-run audit with current pricing to get new results
   const newResults = auditEngine(input_stack);
+  
+  // Calculate savings from stored results (these were calculated with old pricing)
   const oldTotalSavings = calculateTotalSavings(output_result).monthly;
+  
+  // Calculate savings from new results (calculated with current pricing)
   const newTotalSavings = calculateTotalSavings(newResults).monthly;
 
   // Check if recommendations changed
@@ -125,6 +130,7 @@ export function compareAuditResults(
     oldTotalSavings,
     newTotalSavings,
     savingsDelta: newTotalSavings - oldTotalSavings,
+    inputStack: input_stack,
   };
 }
 

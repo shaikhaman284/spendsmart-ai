@@ -18,12 +18,20 @@ export async function sendReauditNotification(
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 
                    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
-    // Get unique pricing changes across all audits
+    // Get unique pricing changes across all audits, filtered by user's actual tools
     const allChanges = new Map<string, PricingChange>();
     for (const audit of audits) {
+      // Get the tools the user actually has from their input_stack
+      const userTools = new Set(
+        audit.inputStack.tools.map(t => `${t.tool.toLowerCase()}-${t.plan.toLowerCase()}`)
+      );
+
+      // Only include pricing changes for tools the user actually has
       for (const change of audit.pricingChanges) {
         const key = `${change.tool}-${change.plan}`;
-        if (!allChanges.has(key)) {
+        const normalizedKey = `${change.tool.toLowerCase()}-${change.plan.toLowerCase()}`;
+        
+        if (userTools.has(normalizedKey) && !allChanges.has(key)) {
           allChanges.set(key, change);
         }
       }
@@ -73,7 +81,17 @@ function generateEmailHTML(
 
   const auditsHTML = audits
     .map(
-      audit => `
+      audit => {
+        let deltaMessage = '';
+        if (audit.savingsDelta > 0) {
+          deltaMessage = `You could save <strong style="color: #10b981;">${formatCurrency(audit.savingsDelta)} MORE</strong> per month with updated recommendations.`;
+        } else if (audit.savingsDelta < 0) {
+          deltaMessage = `Your savings opportunity decreased by <strong style="color: #ef4444;">${formatCurrency(Math.abs(audit.savingsDelta))}/mo</strong> due to pricing changes.`;
+        } else {
+          deltaMessage = `Total savings unchanged but some recommendations differ.`;
+        }
+
+        return `
     <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
         <div>
@@ -87,9 +105,9 @@ function generateEmailHTML(
         </div>
       </div>
       <div style="margin-bottom: 12px;">
-        <strong>Delta:</strong> 
-        <span style="color: ${audit.savingsDelta >= 0 ? '#10b981' : '#ef4444'};">
-          ${audit.savingsDelta >= 0 ? '+' : ''}${formatCurrency(audit.savingsDelta)}/mo
+        <strong>Impact:</strong> 
+        <span style="color: #374151;">
+          ${deltaMessage}
         </span>
       </div>
       <a href="${appUrl}/audit/${audit.auditId}/rerun" 
@@ -97,7 +115,8 @@ function generateEmailHTML(
         View Updated Recommendations →
       </a>
     </div>
-  `
+  `;
+      }
     )
     .join('');
 
