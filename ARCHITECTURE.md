@@ -12,7 +12,7 @@ graph TD
     C -->|Save audit| F[Supabase]
     F -->|Return audit ID| C
     C -->|Return results| B
-    B -->|Navigate to| G[/audit/id]
+    B -->|Navigate to| G["Audit Results Page"]
     G -->|Fetch audit| F
     G -->|Show results| A
     A -->|Submit email| H[Leads API Route]
