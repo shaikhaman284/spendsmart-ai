@@ -52,13 +52,13 @@ async function sendConfirmationEmail(email: string, auditId: string) {
   try {
     const resend = getResendClient();
     await resend.emails.send({
-      from: 'SpendSmart AI <noreply@credex.rocks>',
+      from: 'SpendSmart AI By Shaikh Aman <noreply@awm27.shop>',
       to: email,
       subject: 'Your AI Spend Audit is Ready',
       html: `
         <h1>Your AI Spend Audit Results</h1>
         <p>Thank you for using SpendSmart AI! Your personalized audit is ready.</p>
-        <p><a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/audit/${auditId}">View Your Audit</a></p>
+        <p><a href="${process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')}/audit/${auditId}">View Your Audit</a></p>
         <p>Want to learn more about optimizing your AI spend? Visit <a href="https://credex.rocks">Credex</a>.</p>
       `,
     });
@@ -110,6 +110,24 @@ export async function POST(request: NextRequest) {
       console.error('Supabase lead insert error:', error);
       throw new Error('Failed to save lead');
     }
+
+    // Round 2: Backfill user_email on the audit row so detect-changes
+    // can group notifications by email address.
+    if (lead.auditId) {
+      const { error: updateError } = await supabaseAdmin
+        .from('audits')
+        .update({ user_email: lead.email })
+        .eq('id', lead.auditId)
+        .is('user_email', null); // Only set if not already set
+      if (updateError) {
+        if (updateError.code === 'PGRST204') {
+          // Migration not applied yet — silently skip, non-fatal
+        } else {
+          console.error('Failed to backfill user_email on audit:', updateError);
+        }
+      }
+    }
+
     
     // Send confirmation email
     await sendConfirmationEmail(lead.email, lead.auditId);

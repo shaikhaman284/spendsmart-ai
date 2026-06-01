@@ -9,6 +9,7 @@ import { Sparkles, TrendingDown, Zap, Shield } from 'lucide-react';
 export default function Home() {
   const [loading, setLoading] = useState(false);
   const [auditResults, setAuditResults] = useState<AuditSummary | null>(null);
+  const [auditId, setAuditId] = useState<string | null>(null);
 
   const handleSubmit = async (formData: FormData) => {
     setLoading(true);
@@ -27,6 +28,7 @@ export default function Home() {
       }
       
       // Show results directly on the page
+      setAuditId(data.auditId || null);
       setAuditResults({
         results: data.results,
         totalMonthlySavings: data.totalMonthlySavings,
@@ -42,6 +44,7 @@ export default function Home() {
 
   const handleReset = () => {
     setAuditResults(null);
+    setAuditId(null);
   };
 
   return (
@@ -108,7 +111,7 @@ export default function Home() {
               <span className="group-hover:-translate-x-1 transition-transform">←</span>
               Run Another Audit
             </button>
-            <AuditResults audit={auditResults} />
+            <AuditResults audit={auditResults} auditId={auditId ?? undefined} />
           </div>
         ) : (
           <div className="bg-white rounded-2xl p-8 md:p-12 card-shadow-xl border border-gray-200 animate-slide-up">
