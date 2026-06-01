@@ -56,6 +56,20 @@ export default function AuditResultsClient({ auditData, auditId, totalSavings }:
         {/* Results */}
         <AuditResults audit={audit} auditId={auditId} />
 
+        {/* Round 2: Re-run banner — check for pricing updates */}
+        <div className="mt-6 rounded-xl border border-blue-500/30 bg-blue-950/30 px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p className="font-semibold text-blue-200 text-sm">🔄 Pricing changes since this audit?</p>
+            <p className="text-xs text-slate-400 mt-0.5">See a side-by-side diff of what&apos;s changed in your recommendations.</p>
+          </div>
+          <a
+            href={`/audit/${auditId}/rerun`}
+            className="shrink-0 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
+          >
+            Check for Updates →
+          </a>
+        </div>
+
         {/* Lead Capture Form */}
         {showLeadForm && !leadCaptured && (
           <div className="mt-8">

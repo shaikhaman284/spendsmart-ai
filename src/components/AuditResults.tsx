@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AuditSummary } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils';
 import { TrendingDown, CheckCircle, AlertCircle, Mail, Copy, Check } from 'lucide-react';
@@ -18,6 +18,14 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [copied, setCopied] = useState(false);
+  // shareUrl is built client-side only — window is not defined during SSR
+  const [shareUrl, setShareUrl] = useState('');
+
+  useEffect(() => {
+    if (auditId && typeof window !== 'undefined') {
+      setShareUrl(`${window.location.origin}/audit/${auditId}`);
+    }
+  }, [auditId]);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,8 +61,8 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
   };
 
   const handleCopy = () => {
-    if (auditId) {
-      navigator.clipboard.writeText(`${window.location.origin}/audit/${auditId}`);
+    if (shareUrl) {
+      navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -215,16 +223,16 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
         </div>
       ) : null}
 
-      {/* Share Section */}
-      {auditId && (
-        <div className="bg-white rounded-2xl p-8 border border-gray-200 card-shadow">
-          <h3 className="text-2xl font-bold mb-4 text-gray-900">
+      {/* Share + Re-run Section — only rendered once shareUrl is available client-side */}
+      {auditId && shareUrl && (
+        <div className="bg-white rounded-2xl p-8 border border-gray-200 card-shadow space-y-4">
+          <h3 className="text-2xl font-bold text-gray-900">
             Share Your Audit
           </h3>
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
-              value={`${window.location.origin}/audit/${auditId}`}
+              value={shareUrl}
               readOnly
               className="flex-1 bg-gray-50 border border-gray-300 rounded-xl px-5 py-3 text-gray-700"
             />
@@ -245,9 +253,22 @@ export default function AuditResults({ audit, auditId }: AuditResultsProps) {
               )}
             </button>
           </div>
+
+          {/* Round 2: Re-run link */}
+          <div className="flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 px-4 py-3">
+            <div>
+              <p className="text-sm font-semibold text-blue-800">🔄 Pricing changed since your audit?</p>
+              <p className="text-xs text-blue-600 mt-0.5">See what recommendations would look like today.</p>
+            </div>
+            <a
+              href={`/audit/${auditId}/rerun`}
+              className="shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap ml-4"
+            >
+              Check for Updates →
+            </a>
+          </div>
         </div>
       )}
     </div>
   );
 }
-
