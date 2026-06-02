@@ -2,7 +2,7 @@
 
 SpendSmart AI is an AI spend audit tool for startups that analyzes your AI tool subscriptions and identifies potential savings. Built by Credex to help engineering teams optimize their AI budgets without sacrificing productivity.
 
-![SpendSmart AI Screenshot](https://via.placeholder.com/1200x630/1f2937/60a5fa?text=SpendSmart+AI+Screenshot)
+![SpendSmart AI Screenshot](![SpendSmart Screenshot](image.png))
 
 ## 🚀 Quick Start
 
